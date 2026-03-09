@@ -46,7 +46,7 @@ func TestGetTypeNames(t *testing.T) {
 	tests := []struct {
 		name     string
 		lang     string
-		input    int
+		input    uint64
 		expected []string
 	}{
 		{

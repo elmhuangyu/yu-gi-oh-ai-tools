@@ -18,7 +18,7 @@ var (
 
 // TypeEntry represents a type with multilingual names
 type TypeEntry struct {
-	Value    int    `json:"value"`
+	Value    uint64 `json:"value"`
 	ZhCNName string `json:"zhCNName"`
 	EnUSName string `json:"enUSName"`
 }
@@ -108,7 +108,7 @@ var RaceMap = []RaceEntry{
 }
 
 // GetTypeByName returns the type value by name in the specified language
-func GetTypeByName(lang, name string) optional.Option[int] {
+func GetTypeByName(lang, name string) optional.Option[uint64] {
 	name = strings.TrimSpace(strings.ToLower(name))
 	for _, entry := range TypeMap {
 		var entryName string
@@ -124,11 +124,11 @@ func GetTypeByName(lang, name string) optional.Option[int] {
 			return optional.Some(entry.Value)
 		}
 	}
-	return optional.None[int]()
+	return optional.None[uint64]()
 }
 
 // GetTypeNames returns all type names for the given type value in the specified language
-func GetTypeNames(lang string, t int) []string {
+func GetTypeNames(lang string, t uint64) []string {
 	if t == 0 {
 		return []string{}
 	}
