@@ -1,6 +1,41 @@
 package cdb
 
-import "github.com/elmhuangyu/yu-gi-oh-mcp/lib/git"
+import (
+	"testing"
+
+	"github.com/elmhuangyu/yu-gi-oh-mcp/lib/git"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestCardInfoForHuman_ToCardInfoForAI(t *testing.T) {
+	input := &CardInfoForHuman{
+		ID:        48486809,
+		Name:      "羽翼栗子球 LV6",
+		Desc:      "测试描述",
+		Atk:       300,
+		Def:       200,
+		Level:     6,
+		Race:      "天使",
+		Attribute: "光",
+		SetNames:  []string{"羽翼栗子球", "栗子球", "LV", "元素英雄", "英雄", "至爱"},
+		Type:      []string{"怪兽卡", "效果", "特殊召唤"},
+	}
+
+	got := input.ToCardInfoForAI()
+	want := &CardInfoForAI{
+		Name:      "羽翼栗子球 LV6",
+		Desc:      "测试描述",
+		Atk:       300,
+		Def:       200,
+		Level:     6,
+		Race:      "天使",
+		Attribute: "光",
+		SetNames:  "羽翼栗子球|栗子球|LV|元素英雄|英雄|至爱",
+		Type:      "怪兽卡|效果|特殊召唤",
+	}
+
+	assert.Equal(t, want, got)
+}
 
 func (s *DBSuite) Test_toCardInfoForHuman() {
 	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN")
@@ -31,7 +66,7 @@ func (s *DBSuite) Test_toCardInfoForHuman() {
 		Level:     6,
 		Race:      "天使",
 		Attribute: "光",
-		SetNames:  []string{"羽翼栗子球", "LV", "元素英雄", "至爱"},
+		SetNames:  []string{"羽翼栗子球", "栗子球", "LV", "元素英雄", "英雄", "至爱"},
 		Type:      []string{"怪兽卡", "效果", "特殊召唤"},
 	}
 	s.Assert().Equal(want, got)

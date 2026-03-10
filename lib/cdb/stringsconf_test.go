@@ -23,14 +23,14 @@ func (s *DBSuite) TestReadSetName() {
 
 	// Test known setname entries from zh-CN strings.conf
 	// !setname 0x1 正义盟军	A・O・J
-	name, ok := db.setName.GetByInt(0x1)
+	name, ok := db.setName.GetByUint64(0x1)
 	s.Assert().True(ok, "should find setname for code 0x1")
 	s.Assert().Equal("正义盟军", name, "setname for 0x1 should be 正义盟军")
 
 	// Test reverse lookup
 	code, ok := db.setName.GetByStringFirst("真红眼")
 	s.Assert().True(ok, "should find code for setname 真红眼")
-	s.Assert().Equal(int64(0x3b), int64(code), "code for 真红眼 should be 0x3b")
+	s.Assert().Equal(uint64(0x3b), code, "code for 真红眼 should be 0x3b")
 }
 
 func (s *DBSuite) TestReadSetName_InvalidRepoPath() {
@@ -59,7 +59,7 @@ func TestParseSetNameLine(t *testing.T) {
 	tests := []struct {
 		name              string
 		line              string
-		expectedCode      int
+		expectedCode      uint64
 		expectedLocalName string
 		expectedDedupKey  string
 		expectedErr       error

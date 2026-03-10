@@ -1,30 +1,30 @@
 package cdb
 
-// DoubleMap is a bidirectional map that maintains two-way mappings between int and string.
+// DoubleMap is a bidirectional map that maintains two-way mappings between uint64 and string.
 // This is used for cdb setname code <-> name lookups.
 // It ensures no duplicate keys on either side, but allows multiple codes to have the same name.
 type DoubleMap struct {
 	// intToString: code -> name
-	intToString map[int]string
+	intToString map[uint64]string
 	// stringToInt: name -> []code (supports multiple codes per name)
-	stringToInt map[string][]int
+	stringToInt map[string][]uint64
 	// dedup: dedupKey -> code (deduplication key for AddWithDedup)
-	dedup map[string]int
+	dedup map[string]uint64
 }
 
 // NewDoubleMap creates a new DoubleMap instance.
 func NewDoubleMap() *DoubleMap {
 	return &DoubleMap{
-		intToString: make(map[int]string),
-		stringToInt: make(map[string][]int),
-		dedup:       make(map[string]int),
+		intToString: make(map[uint64]string),
+		stringToInt: make(map[string][]uint64),
+		dedup:       make(map[string]uint64),
 	}
 }
 
 // Add inserts a new key-value pair into the double map.
 // It returns false if the key already exists in intToString.
 // Multiple keys can map to the same string value (many-to-one).
-func (dm *DoubleMap) Add(key int, value string) bool {
+func (dm *DoubleMap) Add(key uint64, value string) bool {
 	// Check if key already exists in intToString
 	if _, exists := dm.intToString[key]; exists {
 		return false
@@ -39,7 +39,7 @@ func (dm *DoubleMap) Add(key int, value string) bool {
 // The dedupKey is used for deduplication in the dedup map instead of value.
 // This is useful when the setname has same local names but different Japanese name.
 // It returns false if the key already exists in intToString OR if dedupKey already exists in dedup map.
-func (dm *DoubleMap) AddWithDedup(key int, value string, dedupKey string) bool {
+func (dm *DoubleMap) AddWithDedup(key uint64, value string, dedupKey string) bool {
 	// Check if key already exists in intToString
 	if _, exists := dm.intToString[key]; exists {
 		return false
@@ -58,24 +58,24 @@ func (dm *DoubleMap) AddWithDedup(key int, value string, dedupKey string) bool {
 	return true
 }
 
-// GetByInt retrieves the string value by int key.
+// GetByUint64 retrieves the string value by uint64 key.
 // Returns empty string and false if not found.
-func (dm *DoubleMap) GetByInt(key int) (string, bool) {
+func (dm *DoubleMap) GetByUint64(key uint64) (string, bool) {
 	val, ok := dm.intToString[key]
 	return val, ok
 }
 
-// GetByString retrieves all int keys by string value.
+// GetByString retrieves all uint64 keys by string value.
 // Returns empty slice and false if not found.
-func (dm *DoubleMap) GetByString(value string) ([]int, bool) {
+func (dm *DoubleMap) GetByString(value string) ([]uint64, bool) {
 	keys, ok := dm.stringToInt[value]
 	return keys, ok
 }
 
-// GetByStringFirst retrieves the first int key by string value.
+// GetByStringFirst retrieves the first uint64 key by string value.
 // Returns 0 and false if not found.
 // This is useful when you expect only one value per name.
-func (dm *DoubleMap) GetByStringFirst(value string) (int, bool) {
+func (dm *DoubleMap) GetByStringFirst(value string) (uint64, bool) {
 	keys, ok := dm.stringToInt[value]
 	if !ok || len(keys) == 0 {
 		return 0, false
@@ -83,8 +83,8 @@ func (dm *DoubleMap) GetByStringFirst(value string) (int, bool) {
 	return keys[0], true
 }
 
-// HasInt checks if an int key exists.
-func (dm *DoubleMap) HasInt(key int) bool {
+// HasUint64 checks if a uint64 key exists.
+func (dm *DoubleMap) HasUint64(key uint64) bool {
 	_, ok := dm.intToString[key]
 	return ok
 }
@@ -102,14 +102,14 @@ func (dm *DoubleMap) Len() int {
 
 // Clear removes all entries from the double map.
 func (dm *DoubleMap) Clear() {
-	dm.intToString = make(map[int]string)
-	dm.stringToInt = make(map[string][]int)
-	dm.dedup = make(map[string]int)
+	dm.intToString = make(map[uint64]string)
+	dm.stringToInt = make(map[string][]uint64)
+	dm.dedup = make(map[string]uint64)
 }
 
-// IntKeys returns all int keys.
-func (dm *DoubleMap) IntKeys() []int {
-	keys := make([]int, 0, len(dm.intToString))
+// Uint64Keys returns all uint64 keys.
+func (dm *DoubleMap) Uint64Keys() []uint64 {
+	keys := make([]uint64, 0, len(dm.intToString))
 	for k := range dm.intToString {
 		keys = append(keys, k)
 	}

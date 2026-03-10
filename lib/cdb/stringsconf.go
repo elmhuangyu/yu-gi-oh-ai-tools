@@ -13,7 +13,7 @@ import (
 // parseSetNameLine parses a setname line from strings.conf
 // Format: `!setname 0x3b 真红眼	レッドアイズ` or `!setname 0xa008 Masked HERO`
 // Returns the code, local name, and dedup key (Japanese name if available)
-func parseSetNameLine(line string) (code int, localName, dedupKey string, err error) {
+func parseSetNameLine(line string) (code uint64, localName, dedupKey string, err error) {
 	// split by space only on the first two parts: !setname and code
 	parts := strings.SplitN(line, " ", 3)
 	if len(parts) < 3 {
@@ -26,7 +26,7 @@ func parseSetNameLine(line string) (code int, localName, dedupKey string, err er
 	if err != nil {
 		return 0, "", "", errors.Join(ErrParseCode, err)
 	}
-	code = int(code64)
+	code = uint64(code64)
 
 	// get name (may contain spaces, split by tab for Japanese name)
 	// format: localName\tJapaneseName
@@ -99,4 +99,27 @@ func (db *DB) readSetName() error {
 
 	db.setName = setName
 	return nil
+}
+
+// isRootSetCode checks if the given setCode is a root set code (no sub-archetype).
+// A root set code uses only the lower 12 bits (0x000 - 0xFFF).
+// Examples:
+//   - Hero = 0x8 (root, fits in 12 bits)
+//   - E・HERO = 0x3008 (not root, has sub-archetype 0x3)
+//   - Elemental HERO = 0x2008 (not root, has sub-archetype 0x2)
+//
+// The check works by masking with 0xFFF: if (setCode & 0xFFF) == setCode,
+// then no bits above bit 11 are set, meaning it's a root set code.
+func isRootSetCode(setCode uint64) bool {
+	return (setCode & 0xFFF) == setCode
+}
+
+// getRootSetCode extracts the root set code from a full setCode.
+// It returns the lower 12 bits (0xFFF), which represent the base archetype.
+// For example:
+//   - 0x3008 -> 0x008 (E・HERO's root is Hero)
+//   - 0x2008 -> 0x008 (Elemental HERO's root is Hero)
+//   - 0x8    -> 0x008 (Hero is already a root set code)
+func getRootSetCode(setCode uint64) uint64 {
+	return setCode & 0xFFF
 }

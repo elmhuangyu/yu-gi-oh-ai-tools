@@ -9,12 +9,12 @@ import (
 func TestDoubleMap_Add(t *testing.T) {
 	tests := []struct {
 		name    string
-		key     int
+		key     uint64
 		value   string
 		wantOk  bool
 		wantLen int
-		wantInt map[int]string
-		wantStr map[string]int
+		wantInt map[uint64]string
+		wantStr map[string]uint64
 	}{
 		{
 			name:    "add first entry",
@@ -22,8 +22,8 @@ func TestDoubleMap_Add(t *testing.T) {
 			value:   "TestCard",
 			wantOk:  true,
 			wantLen: 1,
-			wantInt: map[int]string{1: "TestCard"},
-			wantStr: map[string]int{"TestCard": 1},
+			wantInt: map[uint64]string{1: "TestCard"},
+			wantStr: map[string]uint64{"TestCard": 1},
 		},
 		{
 			name:    "add duplicate key",
@@ -31,8 +31,8 @@ func TestDoubleMap_Add(t *testing.T) {
 			value:   "AnotherCard",
 			wantOk:  false,
 			wantLen: 1,
-			wantInt: map[int]string{1: "TestCard"},
-			wantStr: map[string]int{"TestCard": 1},
+			wantInt: map[uint64]string{1: "TestCard"},
+			wantStr: map[string]uint64{"TestCard": 1},
 		},
 		{
 			name:    "add second entry",
@@ -40,8 +40,8 @@ func TestDoubleMap_Add(t *testing.T) {
 			value:   "SecondCard",
 			wantOk:  true,
 			wantLen: 2,
-			wantInt: map[int]string{1: "TestCard", 2: "SecondCard"},
-			wantStr: map[string]int{"TestCard": 1, "SecondCard": 2},
+			wantInt: map[uint64]string{1: "TestCard", 2: "SecondCard"},
+			wantStr: map[string]uint64{"TestCard": 1, "SecondCard": 2},
 		},
 		{
 			name:    "add duplicate value",
@@ -49,8 +49,8 @@ func TestDoubleMap_Add(t *testing.T) {
 			value:   "TestCard",
 			wantOk:  true,
 			wantLen: 3,
-			wantInt: map[int]string{1: "TestCard", 2: "SecondCard", 3: "TestCard"},
-			wantStr: map[string]int{"TestCard": 1, "SecondCard": 2},
+			wantInt: map[uint64]string{1: "TestCard", 2: "SecondCard", 3: "TestCard"},
+			wantStr: map[string]uint64{"TestCard": 1, "SecondCard": 2},
 		},
 	}
 
@@ -64,14 +64,14 @@ func TestDoubleMap_Add(t *testing.T) {
 	}
 }
 
-func TestDoubleMap_GetByInt(t *testing.T) {
+func TestDoubleMap_GetByUint64(t *testing.T) {
 	dm := NewDoubleMap()
 	_ = dm.Add(1, "CardA")
 	_ = dm.Add(2, "CardB")
 
 	tests := []struct {
 		name    string
-		key     int
+		key     uint64
 		wantVal string
 		wantOk  bool
 	}{
@@ -97,9 +97,9 @@ func TestDoubleMap_GetByInt(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotVal, gotOk := dm.GetByInt(tt.key)
-			assert.Equal(t, tt.wantVal, gotVal, "GetByInt(%d) val = %v, want %v", tt.key, gotVal, tt.wantVal)
-			assert.Equal(t, tt.wantOk, gotOk, "GetByInt(%d) ok = %v, want %v", tt.key, gotOk, tt.wantOk)
+			gotVal, gotOk := dm.GetByUint64(tt.key)
+			assert.Equal(t, tt.wantVal, gotVal, "GetByUint64(%d) val = %v, want %v", tt.key, gotVal, tt.wantVal)
+			assert.Equal(t, tt.wantOk, gotOk, "GetByUint64(%d) ok = %v, want %v", tt.key, gotOk, tt.wantOk)
 		})
 	}
 }
@@ -113,19 +113,19 @@ func TestDoubleMap_GetByString(t *testing.T) {
 	tests := []struct {
 		name     string
 		value    string
-		wantKeys []int
+		wantKeys []uint64
 		wantOk   bool
 	}{
 		{
 			name:     "existing value",
 			value:    "CardA",
-			wantKeys: []int{1, 3},
+			wantKeys: []uint64{1, 3},
 			wantOk:   true,
 		},
 		{
 			name:     "another existing value",
 			value:    "CardB",
-			wantKeys: []int{2},
+			wantKeys: []uint64{2},
 			wantOk:   true,
 		},
 		{
@@ -154,7 +154,7 @@ func TestDoubleMap_GetByStringFirst(t *testing.T) {
 	tests := []struct {
 		name    string
 		value   string
-		wantKey int
+		wantKey uint64
 		wantOk  bool
 	}{
 		{
@@ -186,13 +186,13 @@ func TestDoubleMap_GetByStringFirst(t *testing.T) {
 	}
 }
 
-func TestDoubleMap_HasInt(t *testing.T) {
+func TestDoubleMap_HasUint64(t *testing.T) {
 	dm := NewDoubleMap()
 	_ = dm.Add(1, "CardA")
 
 	tests := []struct {
 		name string
-		key  int
+		key  uint64
 		want bool
 	}{
 		{
@@ -209,8 +209,8 @@ func TestDoubleMap_HasInt(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := dm.HasInt(tt.key)
-			assert.Equal(t, tt.want, got, "HasInt(%d) = %v, want %v", tt.key, got, tt.want)
+			got := dm.HasUint64(tt.key)
+			assert.Equal(t, tt.want, got, "HasUint64(%d) = %v, want %v", tt.key, got, tt.want)
 		})
 	}
 }
@@ -267,21 +267,21 @@ func TestDoubleMap_Clear(t *testing.T) {
 	dm.Clear()
 
 	assert.Equal(t, 0, dm.Len(), "map should have length 0 after clear")
-	assert.False(t, dm.HasInt(1), "HasInt(1) should return false after clear")
+	assert.False(t, dm.HasUint64(1), "HasUint64(1) should return false after clear")
 	assert.False(t, dm.HasString("CardA"), "HasString(CardA) should return false after clear")
 }
 
-func TestDoubleMap_IntKeys(t *testing.T) {
+func TestDoubleMap_Uint64Keys(t *testing.T) {
 	dm := NewDoubleMap()
 	_ = dm.Add(1, "CardA")
 	_ = dm.Add(2, "CardB")
 	_ = dm.Add(3, "CardC")
 
-	keys := dm.IntKeys()
+	keys := dm.Uint64Keys()
 	assert.Len(t, keys, 3, "should have 3 keys")
 
 	// Check all expected keys are present
-	keySet := make(map[int]bool)
+	keySet := make(map[uint64]bool)
 	for _, k := range keys {
 		keySet[k] = true
 	}

@@ -11,7 +11,7 @@ func TestGetTypeByName(t *testing.T) {
 		name     string
 		lang     string
 		input    string
-		expected int
+		expected uint64
 	}{
 		{"Monster in English", LangEnUS, "Monster", 0x1},
 		{"Monster in Chinese", LangZhCN, "怪兽卡", 0x1},

@@ -1,5 +1,19 @@
 package cdb
 
+import "strings"
+
+type CardInfoForAI struct {
+	Name      string `json:"name"`
+	Desc      string `json:"desc"`
+	Atk       int    `json:"atk"`
+	Def       int    `json:"def"`
+	Level     int    `json:"level"`
+	Race      string `json:"race"`
+	Attribute string `json:"attribute"`
+	Type      string `json:"type"`
+	SetNames  string `json:"setNames"`
+}
+
 type CardInfoForHuman struct {
 	ID        uint64   `json:"id"`
 	Name      string   `json:"name"`
@@ -11,6 +25,20 @@ type CardInfoForHuman struct {
 	Race      string   `json:"race"`
 	Attribute string   `json:"attribute"`
 	SetNames  []string `json:"setNames"`
+}
+
+func (s *CardInfoForHuman) ToCardInfoForAI() *CardInfoForAI {
+	return &CardInfoForAI{
+		Name:      s.Name,
+		Desc:      s.Desc,
+		Atk:       s.Atk,
+		Def:       s.Def,
+		Level:     s.Level,
+		Race:      s.Race,
+		Attribute: s.Attribute,
+		Type:      strings.Join(s.Type, "|"),
+		SetNames:  strings.Join(s.SetNames, "|"),
+	}
 }
 
 type CardInfoInDB struct {
@@ -42,13 +70,25 @@ func (s *CardInfoInDB) toCardInfoForHuman(db *DB) *CardInfoForHuman {
 
 	// SetNames is a uint64 where each 16 bits represents a set name code
 	// Extract 4 16-bit values and look up each in the setName map
+	// Also append the root set code -> name for each set code
 	var setNames []string
 	for i := 0; i < 4; i++ {
 		// Extract 16 bits at position i*16
-		code := int((s.SetCode >> (i * 16)) & 0xFFFF)
+		code := (s.SetCode >> (i * 16)) & 0xFFFF
 		if code > 0 {
-			if name, ok := db.setName.GetByInt(code); ok {
+			// Look up the full set code
+			if name, ok := db.setName.GetByUint64(code); ok {
 				setNames = append(setNames, name)
+			}
+			// Also look up the root set code (lower 12 bits)
+			rootCode := getRootSetCode(uint64(code))
+			if rootCode > 0 {
+				if name, ok := db.setName.GetByUint64(rootCode); ok {
+					// Avoid duplicates: only add if different from full set code name
+					if rootCode != code {
+						setNames = append(setNames, name)
+					}
+				}
 			}
 		}
 	}

@@ -4,9 +4,11 @@
 
 A Go-based MCP (Model Context Protocol) server that helps locate Yu-Gi-Oh! cards using mycard/ygopro-database.
 
-## Database Schema
+## Database
 
 For information about the YGOPRO/YGOCore CDB (SQLite3) database schema, see [.ai-docs/ygopro-cdb.md](.ai-docs/ygopro-cdb.md).
+
+We use [`modernc.org/sqlite`](https://modernc.org/sqlite) (a pure-Go SQLite driver) to access the database.
 
 ## Code Style
 
