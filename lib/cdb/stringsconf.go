@@ -52,7 +52,7 @@ func parseSetNameLine(line string) (code uint64, localName, dedupKey string, err
 }
 
 func (db *DB) readSetName() error {
-	setName := NewDoubleMap()
+	setName := NewSetCodeAndName()
 
 	// read strings.conf file in `$repoPath/locales/$Lang`
 	filePath := filepath.Join(db.repoPath, "locales", db.lang, "strings.conf")

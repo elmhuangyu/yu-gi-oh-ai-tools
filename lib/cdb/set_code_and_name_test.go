@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDoubleMap_Add(t *testing.T) {
+func TestSetCodeAndName_Add(t *testing.T) {
 	tests := []struct {
 		name    string
 		key     uint64
@@ -54,20 +54,20 @@ func TestDoubleMap_Add(t *testing.T) {
 		},
 	}
 
-	dm := NewDoubleMap()
+	scn := NewSetCodeAndName()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := dm.Add(tt.key, tt.value)
+			got := scn.Add(tt.key, tt.value)
 			assert.Equal(t, tt.wantOk, got, "Add() = %v, want %v", got, tt.wantOk)
-			assert.Equal(t, tt.wantLen, dm.Len(), "Len, want %v() = %v", dm.Len(), tt.wantLen)
+			assert.Equal(t, tt.wantLen, scn.Len(), "Len, want %v() = %v", scn.Len(), tt.wantLen)
 		})
 	}
 }
 
-func TestDoubleMap_GetByUint64(t *testing.T) {
-	dm := NewDoubleMap()
-	_ = dm.Add(1, "CardA")
-	_ = dm.Add(2, "CardB")
+func TestSetCodeAndName_GetByUint64(t *testing.T) {
+	scn := NewSetCodeAndName()
+	_ = scn.Add(1, "CardA")
+	_ = scn.Add(2, "CardB")
 
 	tests := []struct {
 		name    string
@@ -97,18 +97,18 @@ func TestDoubleMap_GetByUint64(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotVal, gotOk := dm.GetByUint64(tt.key)
+			gotVal, gotOk := scn.GetByUint64(tt.key)
 			assert.Equal(t, tt.wantVal, gotVal, "GetByUint64(%d) val = %v, want %v", tt.key, gotVal, tt.wantVal)
 			assert.Equal(t, tt.wantOk, gotOk, "GetByUint64(%d) ok = %v, want %v", tt.key, gotOk, tt.wantOk)
 		})
 	}
 }
 
-func TestDoubleMap_GetByString(t *testing.T) {
-	dm := NewDoubleMap()
-	_ = dm.Add(1, "CardA")
-	_ = dm.Add(2, "CardB")
-	_ = dm.Add(3, "CardA") // Add another entry with same name
+func TestSetCodeAndName_GetByString(t *testing.T) {
+	scn := NewSetCodeAndName()
+	_ = scn.Add(1, "CardA")
+	_ = scn.Add(2, "CardB")
+	_ = scn.Add(3, "CardA") // Add another entry with same name
 
 	tests := []struct {
 		name     string
@@ -138,18 +138,18 @@ func TestDoubleMap_GetByString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotKeys, gotOk := dm.GetByString(tt.value)
+			gotKeys, gotOk := scn.GetByString(tt.value)
 			assert.Equal(t, tt.wantOk, gotOk, "GetByString(%s) ok = %v, want %v", tt.value, gotOk, tt.wantOk)
 			assert.Equal(t, tt.wantKeys, gotKeys, "GetByString(%s) keys = %v, want %v", tt.value, gotKeys, tt.wantKeys)
 		})
 	}
 }
 
-func TestDoubleMap_GetByStringFirst(t *testing.T) {
-	dm := NewDoubleMap()
-	_ = dm.Add(1, "CardA")
-	_ = dm.Add(2, "CardB")
-	_ = dm.Add(3, "CardA") // Add another entry with same name
+func TestSetCodeAndName_GetByStringFirst(t *testing.T) {
+	scn := NewSetCodeAndName()
+	_ = scn.Add(1, "CardA")
+	_ = scn.Add(2, "CardB")
+	_ = scn.Add(3, "CardA") // Add another entry with same name
 
 	tests := []struct {
 		name    string
@@ -179,16 +179,16 @@ func TestDoubleMap_GetByStringFirst(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotKey, gotOk := dm.GetByStringFirst(tt.value)
+			gotKey, gotOk := scn.GetByStringFirst(tt.value)
 			assert.Equal(t, tt.wantKey, gotKey, "GetByStringFirst(%s) key = %v, want %v", tt.value, gotKey, tt.wantKey)
 			assert.Equal(t, tt.wantOk, gotOk, "GetByStringFirst(%s) ok = %v, want %v", tt.value, gotOk, tt.wantOk)
 		})
 	}
 }
 
-func TestDoubleMap_HasUint64(t *testing.T) {
-	dm := NewDoubleMap()
-	_ = dm.Add(1, "CardA")
+func TestSetCodeAndName_HasUint64(t *testing.T) {
+	scn := NewSetCodeAndName()
+	_ = scn.Add(1, "CardA")
 
 	tests := []struct {
 		name string
@@ -209,15 +209,15 @@ func TestDoubleMap_HasUint64(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := dm.HasUint64(tt.key)
+			got := scn.HasUint64(tt.key)
 			assert.Equal(t, tt.want, got, "HasUint64(%d) = %v, want %v", tt.key, got, tt.want)
 		})
 	}
 }
 
-func TestDoubleMap_HasString(t *testing.T) {
-	dm := NewDoubleMap()
-	_ = dm.Add(1, "CardA")
+func TestSetCodeAndName_HasString(t *testing.T) {
+	scn := NewSetCodeAndName()
+	_ = scn.Add(1, "CardA")
 
 	tests := []struct {
 		name  string
@@ -238,46 +238,46 @@ func TestDoubleMap_HasString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := dm.HasString(tt.value)
+			got := scn.HasString(tt.value)
 			assert.Equal(t, tt.want, got, "HasString(%s) = %v, want %v", tt.value, got, tt.want)
 		})
 	}
 }
 
-func TestDoubleMap_Len(t *testing.T) {
-	dm := NewDoubleMap()
-	assert.Equal(t, 0, dm.Len(), "empty map should have length 0")
+func TestSetCodeAndName_Len(t *testing.T) {
+	scn := NewSetCodeAndName()
+	assert.Equal(t, 0, scn.Len(), "empty map should have length 0")
 
-	_ = dm.Add(1, "CardA")
-	assert.Equal(t, 1, dm.Len(), "map should have length 1")
+	_ = scn.Add(1, "CardA")
+	assert.Equal(t, 1, scn.Len(), "map should have length 1")
 
-	_ = dm.Add(2, "CardB")
-	assert.Equal(t, 2, dm.Len(), "map should have length 2")
+	_ = scn.Add(2, "CardB")
+	assert.Equal(t, 2, scn.Len(), "map should have length 2")
 
 	// Adding duplicate should not change length
-	_ = dm.Add(1, "CardC")
-	assert.Equal(t, 2, dm.Len(), "map should still have length 2 after failed add")
+	_ = scn.Add(1, "CardC")
+	assert.Equal(t, 2, scn.Len(), "map should still have length 2 after failed add")
 }
 
-func TestDoubleMap_Clear(t *testing.T) {
-	dm := NewDoubleMap()
-	_ = dm.Add(1, "CardA")
-	_ = dm.Add(2, "CardB")
+func TestSetCodeAndName_Clear(t *testing.T) {
+	scn := NewSetCodeAndName()
+	_ = scn.Add(1, "CardA")
+	_ = scn.Add(2, "CardB")
 
-	dm.Clear()
+	scn.Clear()
 
-	assert.Equal(t, 0, dm.Len(), "map should have length 0 after clear")
-	assert.False(t, dm.HasUint64(1), "HasUint64(1) should return false after clear")
-	assert.False(t, dm.HasString("CardA"), "HasString(CardA) should return false after clear")
+	assert.Equal(t, 0, scn.Len(), "map should have length 0 after clear")
+	assert.False(t, scn.HasUint64(1), "HasUint64(1) should return false after clear")
+	assert.False(t, scn.HasString("CardA"), "HasString(CardA) should return false after clear")
 }
 
-func TestDoubleMap_Uint64Keys(t *testing.T) {
-	dm := NewDoubleMap()
-	_ = dm.Add(1, "CardA")
-	_ = dm.Add(2, "CardB")
-	_ = dm.Add(3, "CardC")
+func TestSetCodeAndName_Uint64Keys(t *testing.T) {
+	scn := NewSetCodeAndName()
+	_ = scn.Add(1, "CardA")
+	_ = scn.Add(2, "CardB")
+	_ = scn.Add(3, "CardC")
 
-	keys := dm.Uint64Keys()
+	keys := scn.Uint64Keys()
 	assert.Len(t, keys, 3, "should have 3 keys")
 
 	// Check all expected keys are present
@@ -290,13 +290,13 @@ func TestDoubleMap_Uint64Keys(t *testing.T) {
 	assert.True(t, keySet[3], "key 3 should be present")
 }
 
-func TestDoubleMap_StringValues(t *testing.T) {
-	dm := NewDoubleMap()
-	_ = dm.Add(1, "CardA")
-	_ = dm.Add(2, "CardB")
-	_ = dm.Add(3, "CardC")
+func TestSetCodeAndName_StringValues(t *testing.T) {
+	scn := NewSetCodeAndName()
+	_ = scn.Add(1, "CardA")
+	_ = scn.Add(2, "CardB")
+	_ = scn.Add(3, "CardC")
 
-	values := dm.StringValues()
+	values := scn.StringValues()
 	assert.Len(t, values, 3, "should have 3 values")
 
 	// Check all expected values are present

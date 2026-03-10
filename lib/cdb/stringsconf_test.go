@@ -10,7 +10,7 @@ import (
 
 func (s *DBSuite) TestReadSetName() {
 	db := &DB{
-		repoPath: s.repoPath, lang: "zh-CN", setName: NewDoubleMap(),
+		repoPath: s.repoPath, lang: "zh-CN", setName: NewSetCodeAndName(),
 	}
 	err := db.readSetName()
 
@@ -35,7 +35,7 @@ func (s *DBSuite) TestReadSetName() {
 
 func (s *DBSuite) TestReadSetName_InvalidRepoPath() {
 	db := &DB{
-		repoPath: "/invalid/path", lang: "zh-CN", setName: NewDoubleMap(),
+		repoPath: "/invalid/path", lang: "zh-CN", setName: NewSetCodeAndName(),
 	}
 	err := db.readSetName()
 
@@ -46,7 +46,7 @@ func (s *DBSuite) TestReadSetName_InvalidRepoPath() {
 
 func (s *DBSuite) TestReadSetName_InvalidLang() {
 	db := &DB{
-		repoPath: s.repoPath, lang: "InvalidLang", setName: NewDoubleMap(),
+		repoPath: s.repoPath, lang: "InvalidLang", setName: NewSetCodeAndName(),
 	}
 	err := db.readSetName()
 

@@ -27,7 +27,7 @@ type DB struct {
 	gitRepo  *git.Repo
 	repoPath string
 	lang     string
-	setName  *DoubleMap
+	setName  *SetCodeAndName
 	sqlite   *sql.DB
 	lock     sync.RWMutex
 }
@@ -37,7 +37,7 @@ func New(gitRepo *git.Repo, repoPath, lang string) (*DB, error) {
 		gitRepo:  gitRepo,
 		repoPath: repoPath,
 		lang:     lang,
-		setName:  NewDoubleMap(),
+		setName:  NewSetCodeAndName(),
 		lock:     sync.RWMutex{},
 	}
 
