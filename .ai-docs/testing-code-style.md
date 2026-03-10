@@ -9,8 +9,8 @@ All tests should follow these conventions:
    func TestGetTypeByName(t *testing.T) {
        tests := []struct {
            name     string
-           lang    Language
-           input   string
+           lang     Language
+           input    string
            expected uint32
        }{
            {"Monster in English", LangEnUS, "Monster", 0x1},
