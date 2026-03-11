@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/elmhuangyu/yu-gi-oh-mcp/lib/git"
+	"github.com/elmhuangyu/yu-gi-oh-ai-tools/mcp-servers/ygo-db/lib/git"
 	_ "modernc.org/sqlite"
 )
 

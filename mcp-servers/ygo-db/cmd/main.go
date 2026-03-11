@@ -11,9 +11,9 @@ import (
 	"slices"
 	"syscall"
 
-	"github.com/elmhuangyu/yu-gi-oh-mcp/lib/cdb"
-	"github.com/elmhuangyu/yu-gi-oh-mcp/lib/git"
-	"github.com/elmhuangyu/yu-gi-oh-mcp/lib/tools"
+	"github.com/elmhuangyu/yu-gi-oh-ai-tools/mcp-servers/ygo-db/lib/cdb"
+	"github.com/elmhuangyu/yu-gi-oh-ai-tools/mcp-servers/ygo-db/lib/git"
+	"github.com/elmhuangyu/yu-gi-oh-ai-tools/mcp-servers/ygo-db/lib/tools"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
