@@ -3,15 +3,15 @@ package cdb
 import "strings"
 
 type CardInfoForAI struct {
-	Name      string `json:"name"`
-	Desc      string `json:"desc"`
-	Atk       int    `json:"atk"`
-	Def       int    `json:"def"`
-	Level     int    `json:"level"`
-	Race      string `json:"race"`
-	Attribute string `json:"attribute"`
-	Type      string `json:"type"`
-	SetNames  string `json:"setNames"`
+	Name       string `json:"name"`
+	Desc       string `json:"desc"`
+	Atk        int    `json:"atk"`
+	Def        int    `json:"def"`
+	Level      int    `json:"level"`
+	Race       string `json:"race"`
+	Attribute  string `json:"attribute"`
+	Type       string `json:"type"`
+	Archetypes string `json:"archetypes"`
 }
 
 type CardInfoForHuman struct {
@@ -29,15 +29,15 @@ type CardInfoForHuman struct {
 
 func (s *CardInfoForHuman) ToCardInfoForAI() *CardInfoForAI {
 	return &CardInfoForAI{
-		Name:      s.Name,
-		Desc:      s.Desc,
-		Atk:       s.Atk,
-		Def:       s.Def,
-		Level:     s.Level,
-		Race:      s.Race,
-		Attribute: s.Attribute,
-		Type:      strings.Join(s.Type, "|"),
-		SetNames:  strings.Join(s.SetNames, "|"),
+		Name:       s.Name,
+		Desc:       s.Desc,
+		Atk:        s.Atk,
+		Def:        s.Def,
+		Level:      s.Level,
+		Race:       s.Race,
+		Attribute:  s.Attribute,
+		Type:       strings.Join(s.Type, "|"),
+		Archetypes: strings.Join(s.SetNames, "|"),
 	}
 }
 

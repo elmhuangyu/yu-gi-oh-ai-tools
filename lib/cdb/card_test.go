@@ -23,15 +23,15 @@ func TestCardInfoForHuman_ToCardInfoForAI(t *testing.T) {
 
 	got := input.ToCardInfoForAI()
 	want := &CardInfoForAI{
-		Name:      "羽翼栗子球 LV6",
-		Desc:      "测试描述",
-		Atk:       300,
-		Def:       200,
-		Level:     6,
-		Race:      "天使",
-		Attribute: "光",
-		SetNames:  "羽翼栗子球|栗子球|LV|元素英雄|英雄|至爱",
-		Type:      "怪兽卡|效果|特殊召唤",
+		Name:       "羽翼栗子球 LV6",
+		Desc:       "测试描述",
+		Atk:        300,
+		Def:        200,
+		Level:      6,
+		Race:       "天使",
+		Attribute:  "光",
+		Archetypes: "羽翼栗子球|栗子球|LV|元素英雄|英雄|至爱",
+		Type:       "怪兽卡|效果|特殊召唤",
 	}
 
 	assert.Equal(t, want, got)
