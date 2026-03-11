@@ -8,6 +8,12 @@ Usage: python count_deck.py <path_to_ydk_file>
 import sys
 
 
+class YDKError(Exception):
+  """Exception raised for YDK file parsing errors."""
+
+  pass
+
+
 def count_deck(ydk_path):
   """
   Parse a YDK file and count cards in main, extra, and side decks.
@@ -17,6 +23,9 @@ def count_deck(ydk_path):
 
   Returns:
       Tuple of (main_count, extra_count, side_count)
+
+  Raises:
+      YDKError: If file not found or parsing error occurs
   """
   main_count = 0
   extra_count = 0
@@ -59,27 +68,29 @@ def count_deck(ydk_path):
             side_count += 1
 
   except FileNotFoundError:
-    print(f"Error: File '{ydk_path}' not found.")
-    sys.exit(1)
+    raise YDKError(f"File '{ydk_path}' not found.")
   except Exception as e:
-    print(f"Error: {e}")
-    sys.exit(1)
+    raise YDKError(str(e))
 
   return main_count, extra_count, side_count
 
 
 def main():
+  """CLI entry point for count_deck."""
   if len(sys.argv) != 2:
     print("Usage: python count_deck.py <path_to_ydk_file>")
     sys.exit(1)
 
   ydk_path = sys.argv[1]
 
-  main_count, extra_count, side_count = count_deck(ydk_path)
-
-  print(f"main: {main_count}")
-  print(f"extra: {extra_count}")
-  print(f"side: {side_count}")
+  try:
+    main_count, extra_count, side_count = count_deck(ydk_path)
+    print(f"main: {main_count}")
+    print(f"extra: {extra_count}")
+    print(f"side: {side_count}")
+  except YDKError as e:
+    print(f"Error: {e}")
+    sys.exit(1)
 
 
 if __name__ == "__main__":
