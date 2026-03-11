@@ -78,13 +78,13 @@ func (s *CardInfoInDB) toCardInfoForHuman(db *DB) *CardInfoForHuman {
 		code := (s.SetCode >> (i * 16)) & 0xFFFF
 		if code > 0 {
 			// Look up the full set code
-			if name, ok := db.setName.GetByUint64(code); ok {
+			if name, ok := db.setName.GetByCode(code); ok {
 				setNames = append(setNames, name)
 			}
 			// Also look up the root set code (lower 12 bits)
 			rootCode := getRootSetCode(uint64(code))
 			if rootCode > 0 {
-				if name, ok := db.setName.GetByUint64(rootCode); ok {
+				if name, ok := db.setName.GetByCode(rootCode); ok {
 					// Avoid duplicates: only add if different from full set code name
 					if rootCode != code {
 						setNames = append(setNames, name)

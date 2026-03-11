@@ -97,7 +97,7 @@ func TestSetCodeAndName_GetByUint64(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotVal, gotOk := scn.GetByUint64(tt.key)
+			gotVal, gotOk := scn.GetByCode(tt.key)
 			assert.Equal(t, tt.wantVal, gotVal, "GetByUint64(%d) val = %v, want %v", tt.key, gotVal, tt.wantVal)
 			assert.Equal(t, tt.wantOk, gotOk, "GetByUint64(%d) ok = %v, want %v", tt.key, gotOk, tt.wantOk)
 		})
@@ -138,55 +138,14 @@ func TestSetCodeAndName_GetByString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotKeys, gotOk := scn.GetByString(tt.value)
+			gotKeys, gotOk := scn.GetByName(tt.value)
 			assert.Equal(t, tt.wantOk, gotOk, "GetByString(%s) ok = %v, want %v", tt.value, gotOk, tt.wantOk)
 			assert.Equal(t, tt.wantKeys, gotKeys, "GetByString(%s) keys = %v, want %v", tt.value, gotKeys, tt.wantKeys)
 		})
 	}
 }
 
-func TestSetCodeAndName_GetByStringFirst(t *testing.T) {
-	scn := NewSetCodeAndName()
-	_ = scn.Add(1, "CardA")
-	_ = scn.Add(2, "CardB")
-	_ = scn.Add(3, "CardA") // Add another entry with same name
-
-	tests := []struct {
-		name    string
-		value   string
-		wantKey uint64
-		wantOk  bool
-	}{
-		{
-			name:    "existing value returns first key",
-			value:   "CardA",
-			wantKey: 1,
-			wantOk:  true,
-		},
-		{
-			name:    "another existing value",
-			value:   "CardB",
-			wantKey: 2,
-			wantOk:  true,
-		},
-		{
-			name:    "non-existing value",
-			value:   "NonExistent",
-			wantKey: 0,
-			wantOk:  false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotKey, gotOk := scn.GetByStringFirst(tt.value)
-			assert.Equal(t, tt.wantKey, gotKey, "GetByStringFirst(%s) key = %v, want %v", tt.value, gotKey, tt.wantKey)
-			assert.Equal(t, tt.wantOk, gotOk, "GetByStringFirst(%s) ok = %v, want %v", tt.value, gotOk, tt.wantOk)
-		})
-	}
-}
-
-func TestSetCodeAndName_HasUint64(t *testing.T) {
+func TestSetCodeAndName_HasSetCode(t *testing.T) {
 	scn := NewSetCodeAndName()
 	_ = scn.Add(1, "CardA")
 
@@ -209,13 +168,13 @@ func TestSetCodeAndName_HasUint64(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := scn.HasUint64(tt.key)
-			assert.Equal(t, tt.want, got, "HasUint64(%d) = %v, want %v", tt.key, got, tt.want)
+			got := scn.HasSetCode(tt.key)
+			assert.Equal(t, tt.want, got, "HasSetCode(%d) = %v, want %v", tt.key, got, tt.want)
 		})
 	}
 }
 
-func TestSetCodeAndName_HasString(t *testing.T) {
+func TestSetCodeAndName_HasSetName(t *testing.T) {
 	scn := NewSetCodeAndName()
 	_ = scn.Add(1, "CardA")
 
@@ -238,8 +197,8 @@ func TestSetCodeAndName_HasString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := scn.HasString(tt.value)
-			assert.Equal(t, tt.want, got, "HasString(%s) = %v, want %v", tt.value, got, tt.want)
+			got := scn.HasSetName(tt.value)
+			assert.Equal(t, tt.want, got, "HasSetName(%s) = %v, want %v", tt.value, got, tt.want)
 		})
 	}
 }
@@ -267,8 +226,8 @@ func TestSetCodeAndName_Clear(t *testing.T) {
 	scn.Clear()
 
 	assert.Equal(t, 0, scn.Len(), "map should have length 0 after clear")
-	assert.False(t, scn.HasUint64(1), "HasUint64(1) should return false after clear")
-	assert.False(t, scn.HasString("CardA"), "HasString(CardA) should return false after clear")
+	assert.False(t, scn.HasSetCode(1), "HasSetCode(1) should return false after clear")
+	assert.False(t, scn.HasSetName("CardA"), "HasSetName(CardA) should return false after clear")
 }
 
 func TestSetCodeAndName_Uint64Keys(t *testing.T) {
@@ -277,7 +236,7 @@ func TestSetCodeAndName_Uint64Keys(t *testing.T) {
 	_ = scn.Add(2, "CardB")
 	_ = scn.Add(3, "CardC")
 
-	keys := scn.Uint64Keys()
+	keys := scn.SetCodes()
 	assert.Len(t, keys, 3, "should have 3 keys")
 
 	// Check all expected keys are present
@@ -296,7 +255,7 @@ func TestSetCodeAndName_StringValues(t *testing.T) {
 	_ = scn.Add(2, "CardB")
 	_ = scn.Add(3, "CardC")
 
-	values := scn.StringValues()
+	values := scn.SetNames()
 	assert.Len(t, values, 3, "should have 3 values")
 
 	// Check all expected values are present

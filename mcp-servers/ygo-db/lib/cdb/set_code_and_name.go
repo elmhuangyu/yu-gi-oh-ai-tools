@@ -4,10 +4,10 @@ package cdb
 // This is used for cdb setname code <-> name lookups.
 // It ensures no duplicate keys on either side, but allows multiple codes to have the same name.
 type SetCodeAndName struct {
-	// intToString: code -> name
-	intToString map[uint64]string
-	// stringToInt: name -> []code (supports multiple codes per name)
-	stringToInt map[string][]uint64
+	// codeToName: code -> name
+	codeToName map[uint64]string
+	// nameToCodes: name -> []code (supports multiple codes per name)
+	nameToCodes map[string][]uint64
 	// dedup: dedupKey -> code (deduplication key for AddWithDedup)
 	dedup map[string]uint64
 }
@@ -15,8 +15,8 @@ type SetCodeAndName struct {
 // NewSetCodeAndName creates a new SetCodeAndName instance.
 func NewSetCodeAndName() *SetCodeAndName {
 	return &SetCodeAndName{
-		intToString: make(map[uint64]string),
-		stringToInt: make(map[string][]uint64),
+		codeToName:  make(map[uint64]string),
+		nameToCodes: make(map[string][]uint64),
 		dedup:       make(map[string]uint64),
 	}
 }
@@ -26,12 +26,12 @@ func NewSetCodeAndName() *SetCodeAndName {
 // Multiple keys can map to the same string value (many-to-one).
 func (scn *SetCodeAndName) Add(key uint64, value string) bool {
 	// Check if key already exists in intToString
-	if _, exists := scn.intToString[key]; exists {
+	if _, exists := scn.codeToName[key]; exists {
 		return false
 	}
-	scn.intToString[key] = value
+	scn.codeToName[key] = value
 	// Append to the slice for this value (supports many-to-one)
-	scn.stringToInt[value] = append(scn.stringToInt[value], key)
+	scn.nameToCodes[value] = append(scn.nameToCodes[value], key)
 	return true
 }
 
@@ -41,7 +41,7 @@ func (scn *SetCodeAndName) Add(key uint64, value string) bool {
 // It returns false if the key already exists in intToString OR if dedupKey already exists in dedup map.
 func (scn *SetCodeAndName) AddWithDedup(key uint64, value string, dedupKey string) bool {
 	// Check if key already exists in intToString
-	if _, exists := scn.intToString[key]; exists {
+	if _, exists := scn.codeToName[key]; exists {
 		return false
 	}
 
@@ -50,76 +50,63 @@ func (scn *SetCodeAndName) AddWithDedup(key uint64, value string, dedupKey strin
 		return false
 	}
 
-	scn.intToString[key] = value
+	scn.codeToName[key] = value
 	// Add to stringToInt (supports one-to-many by value)
-	scn.stringToInt[value] = append(scn.stringToInt[value], key)
+	scn.nameToCodes[value] = append(scn.nameToCodes[value], key)
 	// Add to dedup map (unique dedupKey -> key)
 	scn.dedup[dedupKey] = key
 	return true
 }
 
-// GetByUint64 retrieves the string value by uint64 key.
+// GetByCode retrieves the setName by setCode.
 // Returns empty string and false if not found.
-func (scn *SetCodeAndName) GetByUint64(key uint64) (string, bool) {
-	val, ok := scn.intToString[key]
+func (scn *SetCodeAndName) GetByCode(key uint64) (string, bool) {
+	val, ok := scn.codeToName[key]
 	return val, ok
 }
 
-// GetByString retrieves all uint64 keys by string value.
+// GetByName retrieves all setCodes by setName.
 // Returns empty slice and false if not found.
-func (scn *SetCodeAndName) GetByString(value string) ([]uint64, bool) {
-	keys, ok := scn.stringToInt[value]
+func (scn *SetCodeAndName) GetByName(value string) ([]uint64, bool) {
+	keys, ok := scn.nameToCodes[value]
 	return keys, ok
 }
 
-// GetByStringFirst retrieves the first uint64 key by string value.
-// Returns 0 and false if not found.
-// This is useful when you expect only one value per name.
-func (scn *SetCodeAndName) GetByStringFirst(value string) (uint64, bool) {
-	keys, ok := scn.stringToInt[value]
-	if !ok || len(keys) == 0 {
-		return 0, false
-	}
-	return keys[0], true
-}
-
-// HasUint64 checks if a uint64 key exists.
-func (scn *SetCodeAndName) HasUint64(key uint64) bool {
-	_, ok := scn.intToString[key]
+func (scn *SetCodeAndName) HasSetCode(key uint64) bool {
+	_, ok := scn.codeToName[key]
 	return ok
 }
 
-// HasString checks if a string value exists.
-func (scn *SetCodeAndName) HasString(value string) bool {
-	_, ok := scn.stringToInt[value]
+func (scn *SetCodeAndName) HasSetName(value string) bool {
+	_, ok := scn.nameToCodes[value]
 	return ok
 }
 
 // Len returns the number of entries in the SetCodeAndName.
 func (scn *SetCodeAndName) Len() int {
-	return len(scn.intToString)
+	return len(scn.codeToName)
 }
 
 // Clear removes all entries from the SetCodeAndName.
 func (scn *SetCodeAndName) Clear() {
-	scn.intToString = make(map[uint64]string)
-	scn.stringToInt = make(map[string][]uint64)
+	scn.codeToName = make(map[uint64]string)
+	scn.nameToCodes = make(map[string][]uint64)
 	scn.dedup = make(map[string]uint64)
 }
 
-// Uint64Keys returns all uint64 keys.
-func (scn *SetCodeAndName) Uint64Keys() []uint64 {
-	keys := make([]uint64, 0, len(scn.intToString))
-	for k := range scn.intToString {
+// SetCodes returns all setCode.
+func (scn *SetCodeAndName) SetCodes() []uint64 {
+	keys := make([]uint64, 0, len(scn.codeToName))
+	for k := range scn.codeToName {
 		keys = append(keys, k)
 	}
 	return keys
 }
 
-// StringValues returns all unique string values.
-func (scn *SetCodeAndName) StringValues() []string {
-	values := make([]string, 0, len(scn.stringToInt))
-	for v := range scn.stringToInt {
+// SetNames returns all unique setName.
+func (scn *SetCodeAndName) SetNames() []string {
+	values := make([]string, 0, len(scn.nameToCodes))
+	for v := range scn.nameToCodes {
 		values = append(values, v)
 	}
 	return values

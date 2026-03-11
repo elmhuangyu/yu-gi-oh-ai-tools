@@ -280,7 +280,7 @@ func (db *DB) FindCardsBySetName(setNames []string, page int) ([]*CardInfoForHum
 	// Collect all set codes from all set names
 	var allCodes []uint64
 	for _, setName := range setNames {
-		codes, ok := db.setName.GetByString(setName)
+		codes, ok := db.setName.GetByName(setName)
 		if !ok || len(codes) == 0 {
 			return nil, 0, nil
 		}
