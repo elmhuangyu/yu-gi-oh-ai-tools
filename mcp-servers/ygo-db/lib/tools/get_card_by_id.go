@@ -15,21 +15,15 @@ type GetCardByIDInput struct {
 	ID uint64 `json:"id" jsonschema:"the card's unique passcode"`
 }
 
-// GetCardByID retrieves a card by ID using the provided database.
-func GetCardByID(db *cdb.DB, id uint64) (*cdb.CardInfoForAI, error) {
-	card, err := db.GetCardByID(id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errors.New("card not found")
-		}
-		return nil, err
-	}
-	return card.ToCardInfoForAI(), nil
+// GetCardByIDOutput represents the output of the get_card_by_id tool.
+type GetCardByIDOutput struct {
+	Card  *cdb.CardInfoForAI `json:"card,omitempty"`
+	Found bool               `json:"found"`
 }
 
 // GetCardByIDHandler creates a tool handler for getting a card by ID.
-func GetCardByIDHandler(db *cdb.DB) func(ctx context.Context, req *mcp.CallToolRequest, args GetCardByIDInput) (*mcp.CallToolResult, *cdb.CardInfoForAI, error) {
-	return func(ctx context.Context, req *mcp.CallToolRequest, args GetCardByIDInput) (*mcp.CallToolResult, *cdb.CardInfoForAI, error) {
+func GetCardByIDHandler(db *cdb.DB) func(ctx context.Context, req *mcp.CallToolRequest, args GetCardByIDInput) (*mcp.CallToolResult, *GetCardByIDOutput, error) {
+	return func(ctx context.Context, req *mcp.CallToolRequest, args GetCardByIDInput) (*mcp.CallToolResult, *GetCardByIDOutput, error) {
 		if args.ID == 0 {
 			return &mcp.CallToolResult{
 				IsError: true,
@@ -39,8 +33,11 @@ func GetCardByIDHandler(db *cdb.DB) func(ctx context.Context, req *mcp.CallToolR
 			}, nil, nil
 		}
 
-		card, err := GetCardByID(db, args.ID)
+		card, err := db.GetCardByID(args.ID)
 		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, &GetCardByIDOutput{Found: false}, nil
+			}
 			return &mcp.CallToolResult{
 				IsError: true,
 				Content: []mcp.Content{
@@ -49,6 +46,6 @@ func GetCardByIDHandler(db *cdb.DB) func(ctx context.Context, req *mcp.CallToolR
 			}, nil, nil
 		}
 
-		return nil, card, nil
+		return nil, &GetCardByIDOutput{Card: card.ToCardInfoForAI(), Found: true}, nil
 	}
 }

@@ -5,13 +5,13 @@ import "strings"
 type CardInfoForAI struct {
 	Name       string `json:"name"`
 	Desc       string `json:"desc"`
-	Atk        int    `json:"atk"`
-	Def        int    `json:"def"`
-	Level      int    `json:"level"`
-	Race       string `json:"race"`
-	Attribute  string `json:"attribute"`
-	Type       string `json:"type"`
-	Archetypes string `json:"archetypes"`
+	Atk        int    `json:"atk,omitempty"`
+	Def        int    `json:"def,omitempty"`
+	Level      int    `json:"level,omitempty"`
+	Race       string `json:"race,omitempty"`
+	Attribute  string `json:"attribute,omitempty"`
+	Type       string `json:"type,omitempty"`
+	Archetypes string `json:"archetypes,omitempty"`
 }
 
 type CardInfoForHuman struct {
