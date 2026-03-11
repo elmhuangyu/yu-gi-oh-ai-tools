@@ -265,55 +265,68 @@ func (db *DB) FindCardByName(name string, offset int) (*CardInfoForHuman, []*Car
 	return exact, maybe, total, rows.Err()
 }
 
-func (db *DB) FindCardsBySetName(setName string, offset int) ([]*CardInfoForHuman, int, error) {
+func (db *DB) FindCardsBySetName(setNames []string, offset int) ([]*CardInfoForHuman, int, error) {
 	const limitSize = 30
+
+	if len(setNames) == 0 || len(setNames) > 4 {
+		return nil, 0, nil
+	}
 
 	db.lock.RLock()
 	defer db.lock.RUnlock()
 
-	// Get set codes from the setName map
-	codes, ok := db.setName.GetByString(setName)
-	if !ok || len(codes) == 0 {
+	// Collect all set codes from all set names
+	var allCodes []uint64
+	for _, setName := range setNames {
+		codes, ok := db.setName.GetByString(setName)
+		if !ok || len(codes) == 0 {
+			return nil, 0, nil
+		}
+		allCodes = append(allCodes, codes...)
+	}
+
+	if len(allCodes) == 0 {
 		return nil, 0, nil
 	}
 
-	// Build the SQL query using bitwise operations to check all 4 slots
+	// Build the SQL query using AND logic
+	// For each set code, we check if it exists in any of the 4 slots
+	// Then we AND all conditions together
 	// Each slot is 16 bits: slot0 (bits 0-15), slot1 (bits 16-31), slot2 (bits 32-47), slot3 (bits 48-63)
-	// The query checks if (setcode >> slotShift) & 0xFFFF & mask == targetCode & mask
-	// This allows matching cards that have the setcode in any of the 4 positions
-	query := `
-		SELECT d.id, t.name, t.desc, d.atk, d.def, d.level, d.type, d.race, d.attribute, d.setcode
-		FROM datas d
-		JOIN texts t ON d.id = t.id
-		WHERE (
-			((d.setcode >> 0)  & 0xFFFF & ?) = ? OR
-			((d.setcode >> 16) & 0xFFFF & ?) = ? OR
-			((d.setcode >> 32) & 0xFFFF & ?) = ? OR
-			((d.setcode >> 48) & 0xFFFF & ?) = ?
-		) AND d.alias = 0
-	`
 
-	// For each set code, use isRootSetCode to determine the mask:
-	// - If root set (isRootSetCode returns true): use mask 0x0FFF to match root + all sub-archetypes
-	// - If not root set (isRootSetCode returns false): use mask 0xFFFF for exact match only
+	// Build the WHERE clause for each set code
+	whereClause := ""
 	var args []interface{}
-	for _, code := range codes {
-		var mask int64 = 0x0FFF
+	for i, code := range allCodes {
+		var mask uint64 = 0x0FFF
 		if !isRootSetCode(code) {
 			mask = 0xFFFF
 		}
-		targetCode := int64(code) & mask
+		targetCode := code & mask
+
+		if i > 0 {
+			whereClause += " AND "
+		}
+		whereClause += "("
+		whereClause += "((d.setcode >> 0)  & 0xFFFF & ?) = ? OR "
+		whereClause += "((d.setcode >> 16) & 0xFFFF & ?) = ? OR "
+		whereClause += "((d.setcode >> 32) & 0xFFFF & ?) = ? OR "
+		whereClause += "((d.setcode >> 48) & 0xFFFF & ?) = ?"
+		whereClause += ")"
+
 		// Add mask and target for each of the 4 slot checks
 		args = append(args, mask, targetCode, mask, targetCode, mask, targetCode, mask, targetCode)
 	}
 
+	query := `
+		SELECT d.id, t.name, t.desc, d.atk, d.def, d.level, d.type, d.race, d.attribute, d.setcode
+		FROM datas d
+		JOIN texts t ON d.id = t.id
+		WHERE ` + whereClause + ` AND d.alias = 0
+	`
+
 	// Get total count
-	countQuery := "SELECT COUNT(*) FROM datas d JOIN texts t ON d.id = t.id WHERE (" +
-		"((d.setcode >> 0)  & 0xFFFF & ?) = ? OR " +
-		"((d.setcode >> 16) & 0xFFFF & ?) = ? OR " +
-		"((d.setcode >> 32) & 0xFFFF & ?) = ? OR " +
-		"((d.setcode >> 48) & 0xFFFF & ?) = ?" +
-		") AND d.alias = 0"
+	countQuery := "SELECT COUNT(*) FROM datas d JOIN texts t ON d.id = t.id WHERE " + whereClause + " AND d.alias = 0"
 	var total int
 	err := db.sqlite.QueryRow(countQuery, args...).Scan(&total)
 	if err != nil {

@@ -138,7 +138,7 @@ func (s *DBSuite) Test_FindCardsBySetName() {
 	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 
-	results, total, err := db.FindCardsBySetName("英雄", 0)
+	results, total, err := db.FindCardsBySetName([]string{"英雄"}, 0)
 	s.Require().NoError(err, "FindCardsBySetName should not return error")
 	s.Assert().Greater(total, 0, "should have results for 英雄 set")
 	s.Assert().LessOrEqual(len(results), 30, "results should be limited to 30 for first page")
@@ -160,14 +160,46 @@ func (s *DBSuite) Test_FindCardsBySetName_Pagination() {
 	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 
-	maybe1, total, err := db.FindCardsBySetName("英雄", 0)
+	maybe1, total, err := db.FindCardsBySetName([]string{"英雄"}, 0)
 	s.Require().NoError(err, "FindCardsBySetName should not return error")
 	s.Assert().LessOrEqual(len(maybe1), 30, "first page may have less than 30 results")
 
 	if total > 30 {
-		maybe2, total2, err := db.FindCardsBySetName("英雄", 30)
+		maybe2, total2, err := db.FindCardsBySetName([]string{"英雄"}, 30)
 		s.Require().NoError(err, "FindCardsBySetName with offset should not return error")
 		s.Assert().Equal(total, total2)
 		s.Assert().Greater(len(maybe2), 0, "second page should have results")
 	}
+}
+
+func (s *DBSuite) Test_FindCardsBySetName_MultipleSetNames() {
+	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN")
+	s.Require().NoError(err, "New should not return error")
+
+	// Test searching with 2 set names: "栗子球" and "英雄"
+	// Should return cards that have BOTH set names (AND logic)
+	results, total, err := db.FindCardsBySetName([]string{"栗子球", "英雄"}, 0)
+	s.Require().NoError(err, "FindCardsBySetName with multiple set names should not return error")
+	s.Assert().Greater(total, 0, "should have results for 栗子球+英雄 set combination")
+
+	// Verify that each result contains both set names (栗子球 AND 英雄)
+	foundWingedMagnet := false
+	for _, card := range results {
+		hasChestnut := false
+		hasHero := false
+		for _, setName := range card.SetNames {
+			if setName == "栗子球" {
+				hasChestnut = true
+			}
+			if setName == "英雄" {
+				hasHero = true
+			}
+		}
+		s.Assert().True(hasChestnut && hasHero, "card %s should have both 栗子球 and 英雄 sets", card.Name)
+
+		if card.Name == "羽翼栗子球 LV6" {
+			foundWingedMagnet = true
+		}
+	}
+	s.Assert().True(foundWingedMagnet, "should find 羽翼栗子球 LV6 in results")
 }
