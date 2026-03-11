@@ -1,6 +1,6 @@
 ---
 name: count-deck
-description: A skill that counts the number of cards in a Yu-Gi-Oh! deck from a YDK file. It parses the file to count cards in the main deck, extra deck, and side deck sections.
+description: This counts the number of cards in a Yu-Gi-Oh! deck from a YDK file. It parses the file to count cards in the main deck, extra deck, and side deck sections.
 ---
 
 # Count Deck

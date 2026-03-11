@@ -1,6 +1,6 @@
 ---
 name: simple-calculator
-description: A skill that performs basic arithmetic calculations (+, -, *, /). Use this skill whenever the user asks for a simple calculation involving these operators. It does not support parentheses or advanced math functions.
+description: This performs basic arithmetic calculations (+, -, *, /). Use this skill whenever the user asks for a simple calculation involving these operators. It does not support parentheses or advanced math functions.
 ---
 
 # Simple Calculator

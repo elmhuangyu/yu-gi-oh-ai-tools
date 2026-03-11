@@ -1,3 +1,3 @@
 # Yu-Gi-Oh Agent Skills
 
-A set of useful skill for agent to understand and build deck.
+A set of useful skills for agent to understand and build Yu-Gi-Oh! deck.
