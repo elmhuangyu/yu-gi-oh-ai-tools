@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "yugioh-card-database": {
+      "httpUrl": "http://127.0.0.1:8000/mcp/"
+    }
+  },
+  "preferences": {
+    "language": "zh-CN"
+  }
+}
