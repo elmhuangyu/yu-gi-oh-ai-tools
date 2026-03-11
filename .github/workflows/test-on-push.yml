@@ -14,8 +14,19 @@ jobs:
       uses: actions/setup-go@v5
       with:
         go-version: '1.26'
+    
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v6
 
-    - name: Run mcp-servers/ygo-db tests
+    - name: Run tests on mcp-servers/ygo-db
       run: |
         go test -v ./...
       working-directory: mcp-servers/ygo-db
+
+    - name: Run linter and tests on skills
+      run: |
+        uv sync --locked --all-extras --dev
+        uvx ruff check .
+        uvx ruff format . --check
+        uv run pytest
+      working-directory: skills

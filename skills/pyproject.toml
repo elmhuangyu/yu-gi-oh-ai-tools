@@ -1,0 +1,26 @@
+[project]
+name = "ygo-skills"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
+
+[tool.ruff]
+line-length = 100
+indent-width = 2
+target-version = "py313"
+exclude = [
+  ".agents/",
+]
+
+[tool.ruff.lint]
+unfixable = []
+per-file-ignores = {}
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
