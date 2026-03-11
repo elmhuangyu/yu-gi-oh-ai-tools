@@ -9,28 +9,65 @@ import (
 )
 
 func (s *DBSuite) TestReadSetName() {
-	db := &DB{
-		repoPath: s.repoPath, lang: "zh-CN", setName: NewSetCodeAndName(),
+	tests := []struct {
+		name         string
+		lang         string
+		code0x1      string
+		code0x3bName string
+		code0x3b     uint64
+		code0x8Name  string
+		code0x8      uint64
+	}{
+		{
+			name:         "zh-CN",
+			lang:         "zh-CN",
+			code0x1:      "正义盟军",
+			code0x3bName: "真红眼",
+			code0x3b:     0x3b,
+		},
+		{
+			name:         "en-US",
+			lang:         "en-US",
+			code0x1:      "Ally of Justice",
+			code0x3bName: "Red-Eyes",
+			code0x3b:     0x3b,
+			code0x8Name:  "HERO",
+			code0x8:      0x8,
+		},
 	}
-	err := db.readSetName()
 
-	// readSetName should succeed
-	s.Require().NoError(err, "readSetName should not return error")
+	for _, tt := range tests {
+		s.Run(tt.name, func() {
+			db := &DB{
+				repoPath: s.repoPath, lang: tt.lang, setName: NewSetCodeAndName(),
+			}
+			err := db.readSetName()
 
-	// SetName should be populated
-	s.Assert().NotNil(db.setName, "SetName should not be nil")
-	s.Assert().True(db.setName.Len() > 0, "SetName should have entries")
+			// readSetName should succeed
+			s.Require().NoError(err, "readSetName should not return error")
 
-	// Test known setname entries from zh-CN strings.conf
-	// !setname 0x1 正义盟军	A・O・J
-	name, ok := db.setName.GetByUint64(0x1)
-	s.Assert().True(ok, "should find setname for code 0x1")
-	s.Assert().Equal("正义盟军", name, "setname for 0x1 should be 正义盟军")
+			// SetName should be populated
+			s.Assert().NotNil(db.setName, "SetName should not be nil")
+			s.Assert().True(db.setName.Len() > 0, "SetName should have entries")
 
-	// Test reverse lookup
-	code, ok := db.setName.GetByStringFirst("真红眼")
-	s.Assert().True(ok, "should find code for setname 真红眼")
-	s.Assert().Equal(uint64(0x3b), code, "code for 真红眼 should be 0x3b")
+			// Test known setname entries
+			name, ok := db.setName.GetByUint64(0x1)
+			s.Assert().True(ok, "should find setname for code 0x1")
+			s.Assert().Equal(tt.code0x1, name, "setname for 0x1 should be %s", tt.code0x1)
+
+			// Test reverse lookup for 0x3b
+			code, ok := db.setName.GetByStringFirst(tt.code0x3bName)
+			s.Assert().True(ok, "should find code for setname %s", tt.code0x3bName)
+			s.Assert().Equal(tt.code0x3b, code, "code for %s should be 0x%x", tt.code0x3bName, tt.code0x3b)
+
+			// Test Hero set (0x8) - only for en-US
+			if tt.code0x8Name != "" {
+				code, ok = db.setName.GetByStringFirst(tt.code0x8Name)
+				s.Assert().True(ok, "should find code for setname %s", tt.code0x8Name)
+				s.Assert().Equal(tt.code0x8, code, "code for %s should be 0x%x", tt.code0x8Name, tt.code0x8)
+			}
+		})
+	}
 }
 
 func (s *DBSuite) TestReadSetName_InvalidRepoPath() {
