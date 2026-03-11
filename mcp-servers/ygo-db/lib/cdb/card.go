@@ -12,6 +12,7 @@ type CardInfoForAI struct {
 	Attribute  string `json:"attribute,omitempty"`
 	Type       string `json:"type,omitempty"`
 	Archetypes string `json:"archetypes,omitempty"`
+	Count      int    `json:"count,omitempty"`
 }
 
 type CardInfoForHuman struct {

@@ -10,6 +10,7 @@ const (
 	ToolNameGetCardByID          = "get_card_by_id"
 	ToolNameGetCardsByName       = "get_cards_by_name"
 	ToolNameGetCardsByArchetypes = "get_cards_by_archetypes"
+	ToolNameGetCardsByYDK        = "get_cards_by_ydk"
 )
 
 // Tools returns a slice of all MCP tools.
@@ -31,5 +32,11 @@ func Tools(server *mcp.Server, db *cdb.DB) {
 		Name:        ToolNameGetCardsByArchetypes,
 		Description: "Search for Yu-Gi-Oh! cards by archetype/set names. Takes a list of archetype names (1-4) and page number as input. Returns matching cards, total count, and current page.",
 	}, GetCardsByArchetypesHandler(db))
+
+	// Register get_cards_by_ydk tool
+	mcp.AddTool(server, &mcp.Tool{
+		Name:        ToolNameGetCardsByYDK,
+		Description: "Retrieve Yu-Gi-Oh! cards from a YDK file (Yugioh Deck file). Takes YDK file content as input and returns cards from main, extra, and side decks.",
+	}, GetCardsByYDKHandler(db))
 
 }
