@@ -180,8 +180,9 @@ func (db *DB) GetCardsByIDs(ids []uint64) (map[uint64]*CardInfoForHuman, error) 
 	return result, rows.Err()
 }
 
-func (db *DB) FindCardByName(name string, offset int) (*CardInfoForHuman, []*CardInfoForHuman, int, error) {
+func (db *DB) FindCardByName(name string, page int) (*CardInfoForHuman, []*CardInfoForHuman, int, error) {
 	const limitSize = 30
+	offset := page * limitSize
 
 	db.lock.RLock()
 	defer db.lock.RUnlock()
@@ -265,8 +266,9 @@ func (db *DB) FindCardByName(name string, offset int) (*CardInfoForHuman, []*Car
 	return exact, maybe, total, rows.Err()
 }
 
-func (db *DB) FindCardsBySetName(setNames []string, offset int) ([]*CardInfoForHuman, int, error) {
+func (db *DB) FindCardsBySetName(setNames []string, page int) ([]*CardInfoForHuman, int, error) {
 	const limitSize = 30
+	offset := page * limitSize
 
 	if len(setNames) == 0 || len(setNames) > 4 {
 		return nil, 0, nil

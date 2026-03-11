@@ -6,7 +6,10 @@ import (
 )
 
 // ToolNames defines the names of all available tools.
-const ToolNameGetCardByID = "get_card_by_id"
+const (
+	ToolNameGetCardByID    = "get_card_by_id"
+	ToolNameGetCardsByName = "get_cards_by_name"
+)
 
 // Tools returns a slice of all MCP tools.
 func Tools(server *mcp.Server, db *cdb.DB) {
@@ -15,5 +18,11 @@ func Tools(server *mcp.Server, db *cdb.DB) {
 		Name:        ToolNameGetCardByID,
 		Description: "Retrieve a Yu-Gi-Oh! card by its unique passcode (ID). Takes a card ID as input and returns the card's information if found.",
 	}, GetCardByIDHandler(db))
+
+	// Register get_cards_by_name tool
+	mcp.AddTool(server, &mcp.Tool{
+		Name:        ToolNameGetCardsByName,
+		Description: "Search for Yu-Gi-Oh! cards by name. Takes a card name and page number as input. Returns exact match (if on page 0), partial matches, total count, and current page.",
+	}, GetCardsByNameHandler(db))
 
 }

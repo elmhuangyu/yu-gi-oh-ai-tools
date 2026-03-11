@@ -126,7 +126,7 @@ func (s *DBSuite) Test_FindCardByName_Pagination() {
 	s.Require().Nil(exact, "exact match should be nil")
 	s.Assert().Equal(30, len(maybe1), "first page should have 30 results")
 
-	_, maybe2, total2, err := db.FindCardByName("龙", 30)
+	_, maybe2, total2, err := db.FindCardByName("龙", 1)
 	s.Require().NoError(err, "FindCardByName with offset should not return error")
 	s.Assert().Equal(total, total2)
 	s.Assert().Equal(30, len(maybe2), "second page should have 30 results")
@@ -165,7 +165,7 @@ func (s *DBSuite) Test_FindCardsBySetName_Pagination() {
 	s.Assert().LessOrEqual(len(maybe1), 30, "first page may have less than 30 results")
 
 	if total > 30 {
-		maybe2, total2, err := db.FindCardsBySetName([]string{"英雄"}, 30)
+		maybe2, total2, err := db.FindCardsBySetName([]string{"英雄"}, 1)
 		s.Require().NoError(err, "FindCardsBySetName with offset should not return error")
 		s.Assert().Equal(total, total2)
 		s.Assert().Greater(len(maybe2), 0, "second page should have results")
