@@ -11,13 +11,6 @@ This skill counts the number of cards in each deck section from a Yu-Gi-Oh! YDK 
 
 When a user provides a path to a YDK file, use the `scripts/count_deck.py` script to count the cards in each section.
 
-### YDK File Format
-
-- Lines following `#main` are the main deck cards
-- Lines following `#extra` are the extra deck cards
-- Lines following `!side` are the side deck cards
-- Any other line beginning with `#` can be ignored
-
 ### Example
 
 User: "Count the cards in deck.ydk"
