@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Count the number of cards in each deck section of a Yu-Gi-Oh! YDK file.
 

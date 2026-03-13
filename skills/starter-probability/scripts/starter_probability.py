@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """Calculate Yu-Gi-Oh! starting hand probabilities using hypergeometric distribution."""
 
 import argparse
