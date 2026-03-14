@@ -47,7 +47,7 @@ func main() {
 	}
 	log.Println("cdb repo updated")
 
-	db, err := cdb.New(repo, repoClonePath, *flagLang)
+	db, err := cdb.New(repo, repoClonePath, *flagLang, true)
 	if err != nil {
 		log.Fatalf("failed to init db: %v", err)
 	}

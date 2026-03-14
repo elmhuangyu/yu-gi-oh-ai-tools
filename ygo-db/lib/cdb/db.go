@@ -24,21 +24,23 @@ const (
 )
 
 type DB struct {
-	gitRepo  *git.Repo
-	repoPath string
-	lang     string
-	setName  *SetCodeAndName
-	sqlite   *sql.DB
-	lock     sync.RWMutex
+	gitRepo          *git.Repo
+	repoPath         string
+	lang             string
+	setName          *SetCodeAndName
+	sqlite           *sql.DB
+	lock             sync.RWMutex
+	enableAutoUpdate bool
 }
 
-func New(gitRepo *git.Repo, repoPath, lang string) (*DB, error) {
+func New(gitRepo *git.Repo, repoPath, lang string, enableAutoUpdate bool) (*DB, error) {
 	db := &DB{
-		gitRepo:  gitRepo,
-		repoPath: repoPath,
-		lang:     lang,
-		setName:  NewSetCodeAndName(),
-		lock:     sync.RWMutex{},
+		gitRepo:          gitRepo,
+		repoPath:         repoPath,
+		lang:             lang,
+		setName:          NewSetCodeAndName(),
+		lock:             sync.RWMutex{},
+		enableAutoUpdate: enableAutoUpdate,
 	}
 
 	db.lock.Lock()
@@ -53,7 +55,9 @@ func New(gitRepo *git.Repo, repoPath, lang string) (*DB, error) {
 		return nil, err
 	}
 
-	go db.startUpdateLoop()
+	if db.enableAutoUpdate {
+		go db.startUpdateLoop()
+	}
 
 	return db, nil
 }
