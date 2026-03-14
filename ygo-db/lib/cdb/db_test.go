@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/elmhuangyu/yu-gi-oh-ai-tools/mcp-servers/ygo-db/lib/git"
+	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/git"
 	"github.com/stretchr/testify/suite"
 )
 

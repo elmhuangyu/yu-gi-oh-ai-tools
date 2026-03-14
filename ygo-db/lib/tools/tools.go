@@ -1,7 +1,7 @@
 package tools
 
 import (
-	"github.com/elmhuangyu/yu-gi-oh-ai-tools/mcp-servers/ygo-db/lib/cdb"
+	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/cdb"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

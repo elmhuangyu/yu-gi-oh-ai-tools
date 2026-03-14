@@ -3,8 +3,8 @@ package tools
 import (
 	"context"
 
-	"github.com/elmhuangyu/yu-gi-oh-ai-tools/mcp-servers/ygo-db/lib/cdb"
-	"github.com/elmhuangyu/yu-gi-oh-ai-tools/mcp-servers/ygo-db/lib/ydk"
+	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/cdb"
+	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/ydk"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

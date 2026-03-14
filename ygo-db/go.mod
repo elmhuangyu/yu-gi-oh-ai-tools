@@ -1,4 +1,4 @@
-module github.com/elmhuangyu/yu-gi-oh-ai-tools/mcp-servers/ygo-db
+module github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db
 
 go 1.26.1
 
