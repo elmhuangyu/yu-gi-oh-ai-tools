@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -54,8 +55,9 @@ func parseSetNameLine(line string) (code uint64, localName, dedupKey string, err
 func (db *DB) readSetName() error {
 	setName := NewSetCodeAndName()
 
-	// read strings.conf file in `$repoPath/locales/$Lang`
-	filePath := filepath.Join(db.repoPath, "locales", db.lang, "strings.conf")
+	// read strings.conf file in `$basePath/ygopro-database/locales/$Lang`
+	repoPath := path.Join(db.basePath, "ygopro-database")
+	filePath := filepath.Join(repoPath, "locales", db.lang, "strings.conf")
 	file, err := os.Open(filePath)
 	if err != nil {
 		return errors.Join(ErrOpenFile, err)

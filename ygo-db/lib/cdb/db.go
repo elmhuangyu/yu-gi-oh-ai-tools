@@ -3,11 +3,12 @@ package cdb
 import (
 	"database/sql"
 	"errors"
+	"path"
 	"path/filepath"
-	"sync"
 	"time"
 
 	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/git"
+	"github.com/gofrs/flock"
 	_ "modernc.org/sqlite"
 )
 
@@ -25,28 +26,34 @@ const (
 
 type DB struct {
 	gitRepo          *git.Repo
-	repoPath         string
+	basePath         string
 	lang             string
 	setName          *SetCodeAndName
 	sqlite           *sql.DB
-	lock             sync.RWMutex
+	lock             *flock.Flock
 	enableAutoUpdate bool
 }
 
-func New(gitRepo *git.Repo, repoPath, lang string, enableAutoUpdate bool) (*DB, error) {
+func New(gitRepo *git.Repo, basePath, lang string, enableAutoUpdate bool) (*DB, error) {
+	lockPath := path.Join(basePath, ".lock")
+	fl := flock.New(lockPath)
+
 	db := &DB{
 		gitRepo:          gitRepo,
-		repoPath:         repoPath,
+		basePath:         basePath,
 		lang:             lang,
 		setName:          NewSetCodeAndName(),
-		lock:             sync.RWMutex{},
+		lock:             fl,
 		enableAutoUpdate: enableAutoUpdate,
 	}
 
-	db.lock.Lock()
-	defer db.lock.Unlock()
+	err := fl.RLock()
+	if err != nil {
+		return nil, err
+	}
+	defer fl.Unlock()
 
-	err := db.readSetName()
+	err = db.readSetName()
 	if err != nil {
 		return nil, err
 	}
@@ -70,9 +77,6 @@ func (db *DB) startUpdateLoop() {
 }
 
 func (db *DB) updateRepo() error {
-	db.lock.Lock()
-	defer db.lock.Unlock()
-
 	if db.sqlite != nil {
 		db.sqlite.Close()
 		db.sqlite = nil
@@ -92,7 +96,8 @@ func (db *DB) updateRepo() error {
 }
 
 func (db *DB) connectSQLite() error {
-	dbPath := filepath.Join(db.repoPath, "locales", db.lang, "cards.cdb")
+	repoPath := path.Join(db.basePath, "ygopro-database")
+	dbPath := filepath.Join(repoPath, "locales", db.lang, "cards.cdb")
 	sqlite, err := sql.Open("sqlite", dbPath)
 	if err != nil {
 		return err
@@ -102,9 +107,6 @@ func (db *DB) connectSQLite() error {
 }
 
 func (db *DB) GetCardByID(id uint64) (*CardInfoForHuman, error) {
-	db.lock.RLock()
-	defer db.lock.RUnlock()
-
 	query := `
 		SELECT d.id, t.name, t.desc, d.atk, d.def, d.level, d.type, d.race, d.attribute, d.setcode
 		FROM datas d
@@ -138,9 +140,6 @@ func (db *DB) GetCardsByIDs(ids []uint64) (map[uint64]*CardInfoForHuman, error) 
 	if len(ids) == 0 {
 		return make(map[uint64]*CardInfoForHuman), nil
 	}
-
-	db.lock.RLock()
-	defer db.lock.RUnlock()
 
 	query := `
 		SELECT d.id, t.name, t.desc, d.atk, d.def, d.level, d.type, d.race, d.attribute, d.setcode
@@ -189,7 +188,7 @@ func (db *DB) FindCardByName(name string, page int) (*CardInfoForHuman, []*CardI
 	offset := page * limitSize
 
 	db.lock.RLock()
-	defer db.lock.RUnlock()
+	defer db.lock.Unlock()
 
 	likePattern := "%" + name + "%"
 
@@ -277,9 +276,6 @@ func (db *DB) FindCardsBySetName(setNames []string, page int) ([]*CardInfoForHum
 	if len(setNames) == 0 || len(setNames) > 4 {
 		return nil, 0, nil
 	}
-
-	db.lock.RLock()
-	defer db.lock.RUnlock()
 
 	// Collect all set codes from all set names
 	var allCodes []uint64

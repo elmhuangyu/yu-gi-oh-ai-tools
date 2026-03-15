@@ -38,7 +38,7 @@ func TestCardInfoForHuman_ToCardInfoForAI(t *testing.T) {
 }
 
 func (s *DBSuite) Test_toCardInfoForHuman() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
+	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
 	from := &CardInfoInDB{

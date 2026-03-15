@@ -35,7 +35,7 @@ func (s *DBSuite) TestReadSetName() {
 	for _, tt := range tests {
 		s.Run(tt.name, func() {
 			db := &DB{
-				repoPath: s.repoPath, lang: tt.lang, setName: NewSetCodeAndName(),
+				basePath: s.basePath, lang: tt.lang, setName: NewSetCodeAndName(),
 			}
 			err := db.readSetName()
 
@@ -61,7 +61,7 @@ func (s *DBSuite) TestReadSetName() {
 
 func (s *DBSuite) TestReadSetName_InvalidRepoPath() {
 	db := &DB{
-		repoPath: "/invalid/path", lang: "zh-CN", setName: NewSetCodeAndName(),
+		basePath: "/invalid/path", lang: "zh-CN", setName: NewSetCodeAndName(),
 	}
 	err := db.readSetName()
 
@@ -72,7 +72,7 @@ func (s *DBSuite) TestReadSetName_InvalidRepoPath() {
 
 func (s *DBSuite) TestReadSetName_InvalidLang() {
 	db := &DB{
-		repoPath: s.repoPath, lang: "InvalidLang", setName: NewSetCodeAndName(),
+		basePath: s.basePath, lang: "InvalidLang", setName: NewSetCodeAndName(),
 	}
 	err := db.readSetName()
 

@@ -30,8 +30,7 @@ var (
 )
 
 const (
-	repoClonePath = "/tmp/yugioh-cdb"
-	cdbRepoURL    = "https://github.com/mycard/ygopro-database.git"
+	cdbRepoURL = "https://github.com/mycard/ygopro-database.git"
 )
 
 func main() {
@@ -41,13 +40,15 @@ func main() {
 		log.Fatalf("lang is not supported: %s", *flagLang)
 	}
 
-	repo := git.NewRepo(repoClonePath, cdbRepoURL)
+	basePath := "/tmp/ygo-db"
+
+	repo := git.NewRepo(basePath, cdbRepoURL)
 	if err := repo.EnsureRepoUpToDate(); err != nil {
 		log.Fatalf("cdb repo failed to update: %v", err)
 	}
 	log.Println("cdb repo updated")
 
-	db, err := cdb.New(repo, repoClonePath, *flagLang, true)
+	db, err := cdb.New(repo, basePath, *flagLang, true)
 	if err != nil {
 		log.Fatalf("failed to init db: %v", err)
 	}

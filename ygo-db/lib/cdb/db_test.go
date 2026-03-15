@@ -2,8 +2,8 @@ package cdb
 
 import (
 	"os"
+	"path"
 	"testing"
-	"time"
 
 	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/git"
 	"github.com/stretchr/testify/suite"
@@ -11,22 +11,24 @@ import (
 
 type DBSuite struct {
 	suite.Suite
-	repoPath string
+	basePath string
 }
 
 const (
-	localPath = "/tmp/yugioh-cdb/"
+	localPath = "/tmp/ygo-db"
 	remoteURL = "https://github.com/mycard/ygopro-database.git"
 )
 
 func (s *DBSuite) SetupSuite() {
-	if _, err := os.Stat(localPath); os.IsNotExist(err) {
+	basePath := localPath
+	ygoproDBPath := path.Join(basePath, "ygopro-database")
+	if _, err := os.Stat(ygoproDBPath); os.IsNotExist(err) {
 		// Clone the ygopro-database repo for testing
-		repo := git.NewRepo(localPath, remoteURL)
+		repo := git.NewRepo(basePath, remoteURL)
 		err := repo.EnsureRepoUpToDate()
 		s.Require().NoError(err, "failed to clone ygopro-database repo")
 	}
-	s.repoPath = localPath
+	s.basePath = basePath
 }
 
 func TestDB(t *testing.T) {
@@ -34,7 +36,7 @@ func TestDB(t *testing.T) {
 }
 
 func (s *DBSuite) Test_New() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
+	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 	s.Require().NotNil(db, "db should not be nil")
 	s.Require().NotNil(db.setName, "SetName should not be nil")
@@ -42,7 +44,7 @@ func (s *DBSuite) Test_New() {
 }
 
 func (s *DBSuite) Test_updateRepo() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
+	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
 	err = db.updateRepo()
@@ -50,32 +52,8 @@ func (s *DBSuite) Test_updateRepo() {
 	s.Assert().Less(0, db.setName.Len(), "SetName should have entries")
 }
 
-func (s *DBSuite) Test_updateRepo_BlockedByReadLock() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
-	s.Require().NoError(err, "New should not return error")
-
-	// Acquire a read lock
-	db.lock.RLock()
-	// Start a goroutine that holds a read lock for 1 second
-	startTime := time.Now()
-	go func() {
-		// Hold the read lock for 1 second
-		time.Sleep(1 * time.Second)
-		db.lock.RUnlock()
-	}()
-
-	// Call updateRepo which requires a write lock
-	// It should be blocked by the read lock and take at least 1 second
-	err = db.updateRepo()
-	elapsed := time.Since(startTime)
-
-	s.Require().NoError(err, "updateRepo should not return error")
-	s.Assert().GreaterOrEqual(elapsed, 900*time.Millisecond,
-		"updateRepo should have been blocked by the read lock for at least ~1 second")
-}
-
 func (s *DBSuite) Test_GetCardByID() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
+	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
 	card, err := db.GetCardByID(48486809)
@@ -95,7 +73,7 @@ func (s *DBSuite) Test_GetCardByID() {
 }
 
 func (s *DBSuite) Test_GetCardByID_NotFound() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
+	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
 	_, err = db.GetCardByID(99999999)
@@ -103,7 +81,7 @@ func (s *DBSuite) Test_GetCardByID_NotFound() {
 }
 
 func (s *DBSuite) Test_FindCardByName() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
+	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
 	exact, maybe, total, err := db.FindCardByName("青眼白龙", 0)
@@ -118,7 +96,7 @@ func (s *DBSuite) Test_FindCardByName() {
 }
 
 func (s *DBSuite) Test_FindCardByName_Pagination() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
+	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
 	exact, maybe1, total, err := db.FindCardByName("龙", 0)
@@ -135,7 +113,7 @@ func (s *DBSuite) Test_FindCardByName_Pagination() {
 }
 
 func (s *DBSuite) Test_FindCardsBySetName() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
+	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
 	results, total, err := db.FindCardsBySetName([]string{"英雄"}, 0)
@@ -157,7 +135,7 @@ func (s *DBSuite) Test_FindCardsBySetName() {
 }
 
 func (s *DBSuite) Test_FindCardsBySetName_Pagination() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
+	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
 	maybe1, total, err := db.FindCardsBySetName([]string{"英雄"}, 0)
@@ -173,7 +151,7 @@ func (s *DBSuite) Test_FindCardsBySetName_Pagination() {
 }
 
 func (s *DBSuite) Test_FindCardsBySetName_MultipleSetNames() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.repoPath, "zh-CN", false)
+	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
 	// Test searching with 2 set names: "栗子球" and "英雄"
