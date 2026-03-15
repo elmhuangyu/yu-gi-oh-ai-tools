@@ -107,6 +107,9 @@ func (db *DB) connectSQLite() error {
 }
 
 func (db *DB) GetCardByID(id uint64) (*CardInfoForHuman, error) {
+	db.lock.RLock()
+	defer db.lock.Unlock()
+
 	query := `
 		SELECT d.id, t.name, t.desc, d.atk, d.def, d.level, d.type, d.race, d.attribute, d.setcode
 		FROM datas d
@@ -137,6 +140,9 @@ func (db *DB) GetCardByID(id uint64) (*CardInfoForHuman, error) {
 }
 
 func (db *DB) GetCardsByIDs(ids []uint64) (map[uint64]*CardInfoForHuman, error) {
+	db.lock.RLock()
+	defer db.lock.Unlock()
+
 	if len(ids) == 0 {
 		return make(map[uint64]*CardInfoForHuman), nil
 	}
@@ -184,11 +190,11 @@ func (db *DB) GetCardsByIDs(ids []uint64) (map[uint64]*CardInfoForHuman, error) 
 }
 
 func (db *DB) FindCardByName(name string, page int) (*CardInfoForHuman, []*CardInfoForHuman, int, error) {
-	const limitSize = 30
-	offset := page * limitSize
-
 	db.lock.RLock()
 	defer db.lock.Unlock()
+
+	const limitSize = 30
+	offset := page * limitSize
 
 	likePattern := "%" + name + "%"
 
@@ -270,6 +276,9 @@ func (db *DB) FindCardByName(name string, page int) (*CardInfoForHuman, []*CardI
 }
 
 func (db *DB) FindCardsBySetName(setNames []string, page int) ([]*CardInfoForHuman, int, error) {
+	db.lock.RLock()
+	defer db.lock.Unlock()
+
 	const limitSize = 30
 	offset := page * limitSize
 

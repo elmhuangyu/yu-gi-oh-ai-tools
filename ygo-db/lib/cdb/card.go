@@ -3,16 +3,16 @@ package cdb
 import "strings"
 
 type CardInfoForAI struct {
-	Name       string `json:"name"`
-	Desc       string `json:"desc"`
-	Atk        int    `json:"atk,omitempty"`
-	Def        int    `json:"def,omitempty"`
-	Level      int    `json:"level,omitempty"`
-	Race       string `json:"race,omitempty"`
-	Attribute  string `json:"attribute,omitempty"`
-	Type       string `json:"type,omitempty"`
-	Archetypes string `json:"archetypes,omitempty"`
-	Count      int    `json:"count,omitempty"`
+	Name       string `json:"name" yaml:"name"`
+	Desc       string `json:"desc" yaml:"desc"`
+	Atk        int    `json:"atk,omitempty" yaml:"atk,omitempty"`
+	Def        int    `json:"def,omitempty" yaml:"def,omitempty"`
+	Level      int    `json:"level,omitempty" yaml:"level,omitempty"`
+	Race       string `json:"race,omitempty" yaml:"race,omitempty"`
+	Attribute  string `json:"attribute,omitempty" yaml:"attribute,omitempty"`
+	Type       string `json:"type,omitempty" yaml:"type,omitempty"`
+	Archetypes string `json:"archetypes,omitempty" yaml:"archetypes,omitempty"`
+	Count      int    `json:"count,omitempty" yaml:"count,omitempty"`
 }
 
 type CardInfoForHuman struct {
