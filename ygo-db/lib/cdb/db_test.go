@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/git"
+	"github.com/moznion/go-optional"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -63,11 +64,11 @@ func (s *DBSuite) Test_GetCardByID() {
 	s.Assert().Equal(uint64(48486809), card.ID)
 	s.Assert().Equal("羽翼栗子球 LV6", card.Name)
 	s.Assert().NotEmpty(card.Desc, "card desc should not be empty")
-	s.Assert().Equal(300, card.Atk)
-	s.Assert().Equal(200, card.Def)
-	s.Assert().Equal(6, card.Level)
-	s.Assert().Equal("天使", card.Race)
-	s.Assert().Equal("光", card.Attribute)
+	s.Assert().Equal(optional.Some(300), card.Atk)
+	s.Assert().Equal(optional.Some(200), card.Def)
+	s.Assert().Equal(optional.Some(6), card.Level)
+	s.Assert().Equal(optional.Some("天使"), card.Race)
+	s.Assert().Equal(optional.Some("光"), card.Attribute)
 	s.Assert().Equal([]string{"羽翼栗子球", "栗子球", "LV", "元素英雄", "英雄", "至爱"}, card.SetNames)
 	s.Assert().Equal([]string{"怪兽卡", "效果", "特殊召唤"}, card.Type)
 }

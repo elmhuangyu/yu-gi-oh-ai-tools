@@ -37,6 +37,10 @@ type RaceEntry struct {
 	EnUSName string `json:"enUSName"`
 }
 
+const (
+	TypeMonster uint64 = 0x1
+)
+
 // TypeMap stores all type entries with embedded constants
 var TypeMap = []TypeEntry{
 	{0x1, "怪兽卡", "Monster"},

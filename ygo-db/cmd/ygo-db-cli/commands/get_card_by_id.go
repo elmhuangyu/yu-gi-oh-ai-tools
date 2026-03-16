@@ -2,11 +2,13 @@ package commands
 
 import (
 	"database/sql"
+	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/cdb"
 	"github.com/goccy/go-yaml"
@@ -25,7 +27,7 @@ func SetDB(database *cdb.DB) {
 }
 
 func init() {
-	GetCardByIDCmd.Flags().StringVar(&outputFormat, "format", "yaml", "Output format: json, yaml")
+	GetCardByIDCmd.Flags().StringVar(&outputFormat, "format", "yaml", "Output format: json, yaml, csv")
 }
 
 var GetCardByIDCmd = &cobra.Command{
@@ -63,6 +65,26 @@ var GetCardByIDCmd = &cobra.Command{
 			if err != nil {
 				log.Fatalf("failed to marshal card: %v", err)
 			}
+		case "csv":
+			headers, rows := cdb.CardInfoForHumanToCSV([]*cdb.CardInfoForHuman{card})
+			if headers == nil {
+				output = []byte{}
+				break
+			}
+			// Build CSV output using encoding/csv
+			var buf strings.Builder
+			writer := csv.NewWriter(&buf)
+			err := writer.Write(headers)
+			if err != nil {
+				log.Fatalf("failed to write CSV header: %v", err)
+			}
+			err = writer.WriteAll(rows)
+			if err != nil {
+				log.Fatalf("failed to write CSV row: %v", err)
+			}
+			writer.Flush()
+			output = []byte(buf.String())
+
 		default:
 			log.Fatalf("unsupported output format: %s (supported: json, yaml)", outputFormat)
 		}
