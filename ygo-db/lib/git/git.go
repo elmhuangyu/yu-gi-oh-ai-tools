@@ -23,7 +23,7 @@ func NewRepo(basePath, remoteURL string) *Repo {
 	}
 }
 
-func (r *Repo) EnsureRepoUpToDate() error {
+func (r *Repo) EnsureRepoUpToDate() (err error) {
 	if _, err := os.Stat(r.BasePath); os.IsNotExist(err) {
 		if err := os.MkdirAll(r.BasePath, 0777); err != nil {
 			return err
@@ -39,11 +39,10 @@ func (r *Repo) EnsureRepoUpToDate() error {
 
 	lockPath := path.Join(r.BasePath, ".lock")
 	fl := flock.New(lockPath)
-	err := fl.Lock()
-	if err != nil {
+	if err := fl.Lock(); err != nil {
 		return err
 	}
-	defer fl.Unlock()
+	defer func() { err = fl.Unlock() }()
 
 	// Double-check: re-read timestamp after acquiring lock
 	if !r.needsUpdate(lastUpdatePath) {

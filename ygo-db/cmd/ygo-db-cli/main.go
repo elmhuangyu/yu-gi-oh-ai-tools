@@ -7,10 +7,11 @@ import (
 	"path/filepath"
 	"slices"
 
+	"github.com/spf13/cobra"
+
 	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/cmd/ygo-db-cli/commands"
 	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/cdb"
 	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/git"
-	"github.com/spf13/cobra"
 )
 
 const (

@@ -5,9 +5,10 @@ import (
 	"path"
 	"testing"
 
-	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/git"
 	"github.com/moznion/go-optional"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/git"
 )
 
 const pageSize = 30

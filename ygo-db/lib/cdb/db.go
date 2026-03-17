@@ -26,22 +26,21 @@ type DB struct {
 	lock     *flock.Flock
 }
 
-func New(basePath, lang string) (*DB, error) {
+func New(basePath, lang string) (db *DB, err error) {
 	lockPath := path.Join(basePath, ".lock")
 	fl := flock.New(lockPath)
 
-	db := &DB{
+	db = &DB{
 		basePath: basePath,
 		lang:     lang,
 		setName:  NewSetCodeAndName(),
 		lock:     fl,
 	}
 
-	err := fl.RLock()
-	if err != nil {
+	if err = db.lock.RLock(); err != nil {
 		return nil, err
 	}
-	defer fl.Unlock()
+	defer func() { err = db.lock.Unlock() }()
 
 	err = db.readSetName()
 	if err != nil {
@@ -66,9 +65,11 @@ func (db *DB) connectSQLite() error {
 	return nil
 }
 
-func (db *DB) GetCardByID(id uint64) (*CardInfoForHuman, error) {
-	db.lock.RLock()
-	defer db.lock.Unlock()
+func (db *DB) GetCardByID(id uint64) (result *CardInfoForHuman, err error) {
+	if err = db.lock.RLock(); err != nil {
+		return nil, err
+	}
+	defer func() { err = db.lock.Unlock() }()
 
 	query := `
 		SELECT d.id, t.name, t.desc, d.atk, d.def, d.level, d.type, d.race, d.attribute, d.setcode
@@ -80,7 +81,7 @@ func (db *DB) GetCardByID(id uint64) (*CardInfoForHuman, error) {
 	row := db.sqlite.QueryRow(query, id)
 
 	var card CardInfoInDB
-	err := row.Scan(
+	err = row.Scan(
 		&card.ID,
 		&card.Name,
 		&card.Desc,
@@ -99,9 +100,11 @@ func (db *DB) GetCardByID(id uint64) (*CardInfoForHuman, error) {
 	return card.toCardInfoForHuman(db), nil
 }
 
-func (db *DB) GetCardsByIDs(ids []uint64) (map[uint64]*CardInfoForHuman, error) {
-	db.lock.RLock()
-	defer db.lock.Unlock()
+func (db *DB) GetCardsByIDs(ids []uint64) (result map[uint64]*CardInfoForHuman, err error) {
+	if err = db.lock.RLock(); err != nil {
+		return nil, err
+	}
+	defer func() { err = db.lock.Unlock() }()
 
 	if len(ids) == 0 {
 		return make(map[uint64]*CardInfoForHuman), nil
@@ -123,9 +126,9 @@ func (db *DB) GetCardsByIDs(ids []uint64) (map[uint64]*CardInfoForHuman, error) 
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { err = rows.Close() }()
 
-	result := make(map[uint64]*CardInfoForHuman)
+	result = make(map[uint64]*CardInfoForHuman)
 	for rows.Next() {
 		var card CardInfoInDB
 		err := rows.Scan(
@@ -149,17 +152,18 @@ func (db *DB) GetCardsByIDs(ids []uint64) (map[uint64]*CardInfoForHuman, error) 
 	return result, rows.Err()
 }
 
-func (db *DB) FindCardByName(name string, page int) (*CardInfoForHuman, []*CardInfoForHuman, int, error) {
-	db.lock.RLock()
-	defer db.lock.Unlock()
+func (db *DB) FindCardByName(name string, page int) (exact *CardInfoForHuman, maybe []*CardInfoForHuman, total int, err error) {
+	if err = db.lock.RLock(); err != nil {
+		return nil, nil, 0, err
+	}
+	defer func() { err = db.lock.Unlock() }()
 
 	const limitSize = 30
 	offset := page * limitSize
 
 	likePattern := "%" + name + "%"
 
-	var total int
-	err := db.sqlite.QueryRow(`
+	err = db.sqlite.QueryRow(`
 		SELECT COUNT(*)
 		FROM texts t
 		JOIN datas d ON d.id = t.id
@@ -169,10 +173,9 @@ func (db *DB) FindCardByName(name string, page int) (*CardInfoForHuman, []*CardI
 		return nil, nil, 0, err
 	}
 
-	var exact *CardInfoForHuman
 	if offset == 0 {
 		var card CardInfoInDB
-		err := db.sqlite.QueryRow(`
+		err = db.sqlite.QueryRow(`
 			SELECT d.id, t.name, t.desc, d.atk, d.def, d.level, d.type, d.race, d.attribute, d.setcode
 			FROM datas d
 			JOIN texts t ON d.id = t.id
@@ -207,9 +210,7 @@ func (db *DB) FindCardByName(name string, page int) (*CardInfoForHuman, []*CardI
 	if err != nil {
 		return nil, nil, 0, err
 	}
-	defer rows.Close()
-
-	var maybe []*CardInfoForHuman
+	defer func() { err = rows.Close() }()
 
 	for rows.Next() {
 		var card CardInfoInDB
@@ -235,9 +236,11 @@ func (db *DB) FindCardByName(name string, page int) (*CardInfoForHuman, []*CardI
 	return exact, maybe, total, rows.Err()
 }
 
-func (db *DB) FindCardsBySetName(setNames []string, pageSize, page int) ([]*CardInfoForHuman, int, error) {
-	db.lock.RLock()
-	defer db.lock.Unlock()
+func (db *DB) FindCardsBySetName(setNames []string, pageSize, page int) (results []*CardInfoForHuman, total int, err error) {
+	if err = db.lock.RLock(); err != nil {
+		return nil, 0, err
+	}
+	defer func() { err = db.lock.Unlock() }()
 
 	offset := page * pageSize
 
@@ -297,8 +300,7 @@ func (db *DB) FindCardsBySetName(setNames []string, pageSize, page int) ([]*Card
 
 	// Get total count
 	countQuery := "SELECT COUNT(*) FROM datas d JOIN texts t ON d.id = t.id WHERE " + whereClause + " AND d.alias = 0"
-	var total int
-	err := db.sqlite.QueryRow(countQuery, args...).Scan(&total)
+	err = db.sqlite.QueryRow(countQuery, args...).Scan(&total)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -311,9 +313,8 @@ func (db *DB) FindCardsBySetName(setNames []string, pageSize, page int) ([]*Card
 	if err != nil {
 		return nil, 0, err
 	}
-	defer rows.Close()
+	defer func() { err = rows.Close() }()
 
-	var results []*CardInfoForHuman
 	for rows.Next() {
 		var card CardInfoInDB
 		err := rows.Scan(

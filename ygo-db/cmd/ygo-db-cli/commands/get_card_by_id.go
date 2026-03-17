@@ -10,9 +10,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/cdb"
 	"github.com/goccy/go-yaml"
 	"github.com/spf13/cobra"
+
+	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/cdb"
 )
 
 var (

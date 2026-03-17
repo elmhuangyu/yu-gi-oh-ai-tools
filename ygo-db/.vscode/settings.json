@@ -1,0 +1,6 @@
+{
+  "gopls": {
+    "ui.formatting.local": "github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db"
+  },
+  "go.formatTool": "goimports"
+}

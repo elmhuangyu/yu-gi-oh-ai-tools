@@ -1,0 +1,11 @@
+# List all available recipes
+default:
+    @just --list
+
+# Format code with goimports
+fmt:
+    goimports -w -local "github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db" .
+
+# Run golangci-lint
+lint:
+    golangci-lint run
