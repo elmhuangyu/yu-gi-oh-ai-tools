@@ -62,7 +62,7 @@ func init() {
 			log.Printf("cdb repo failed to update: %v", err)
 		}
 
-		db, err = cdb.New(gitRepo, basePath, flagLang, false)
+		db, err = cdb.New(basePath, flagLang)
 		if err != nil {
 			return err
 		}

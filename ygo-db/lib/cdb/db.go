@@ -5,9 +5,7 @@ import (
 	"errors"
 	"path"
 	"path/filepath"
-	"time"
 
-	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/git"
 	"github.com/gofrs/flock"
 	_ "modernc.org/sqlite"
 )
@@ -20,31 +18,23 @@ var (
 	ErrInvalidSetNameLine = errors.New("invalid setname line format")
 )
 
-const (
-	updateInterval = time.Hour * 24
-)
-
 type DB struct {
-	gitRepo          *git.Repo
-	basePath         string
-	lang             string
-	setName          *SetCodeAndName
-	sqlite           *sql.DB
-	lock             *flock.Flock
-	enableAutoUpdate bool
+	basePath string
+	lang     string
+	setName  *SetCodeAndName
+	sqlite   *sql.DB
+	lock     *flock.Flock
 }
 
-func New(gitRepo *git.Repo, basePath, lang string, enableAutoUpdate bool) (*DB, error) {
+func New(basePath, lang string) (*DB, error) {
 	lockPath := path.Join(basePath, ".lock")
 	fl := flock.New(lockPath)
 
 	db := &DB{
-		gitRepo:          gitRepo,
-		basePath:         basePath,
-		lang:             lang,
-		setName:          NewSetCodeAndName(),
-		lock:             fl,
-		enableAutoUpdate: enableAutoUpdate,
+		basePath: basePath,
+		lang:     lang,
+		setName:  NewSetCodeAndName(),
+		lock:     fl,
 	}
 
 	err := fl.RLock()
@@ -62,37 +52,7 @@ func New(gitRepo *git.Repo, basePath, lang string, enableAutoUpdate bool) (*DB, 
 		return nil, err
 	}
 
-	if db.enableAutoUpdate {
-		go db.startUpdateLoop()
-	}
-
 	return db, nil
-}
-
-func (db *DB) startUpdateLoop() {
-	for {
-		time.Sleep(updateInterval)
-		db.updateRepo()
-	}
-}
-
-func (db *DB) updateRepo() error {
-	if db.sqlite != nil {
-		db.sqlite.Close()
-		db.sqlite = nil
-	}
-
-	err := db.gitRepo.EnsureRepoUpToDate()
-	if err != nil {
-		return err
-	}
-
-	err = db.readSetName()
-	if err != nil {
-		return err
-	}
-
-	return db.connectSQLite()
 }
 
 func (db *DB) connectSQLite() error {

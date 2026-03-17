@@ -3,7 +3,6 @@ package cdb
 import (
 	"testing"
 
-	"github.com/elmhuangyu/yu-gi-oh-ai-tools/ygo-db/lib/git"
 	"github.com/moznion/go-optional"
 	"github.com/stretchr/testify/assert"
 )
@@ -46,7 +45,7 @@ func TestCardInfoForHuman_ToCardInfoForAI(t *testing.T) {
 }
 
 func (s *DBSuite) Test_toCardInfoForHuman() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
+	db, err := New(s.basePath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 
 	from := &CardInfoInDB{

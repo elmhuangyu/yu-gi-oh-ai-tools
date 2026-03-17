@@ -39,24 +39,15 @@ func TestDB(t *testing.T) {
 }
 
 func (s *DBSuite) Test_New() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
+	db, err := New(s.basePath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 	s.Require().NotNil(db, "db should not be nil")
 	s.Require().NotNil(db.setName, "SetName should not be nil")
 	s.Assert().Less(0, db.setName.Len(), "SetName should have entries")
 }
 
-func (s *DBSuite) Test_updateRepo() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
-	s.Require().NoError(err, "New should not return error")
-
-	err = db.updateRepo()
-	s.Require().NoError(err, "updateRepo should not return error")
-	s.Assert().Less(0, db.setName.Len(), "SetName should have entries")
-}
-
 func (s *DBSuite) Test_GetCardByID() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
+	db, err := New(s.basePath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 
 	card, err := db.GetCardByID(48486809)
@@ -76,7 +67,7 @@ func (s *DBSuite) Test_GetCardByID() {
 }
 
 func (s *DBSuite) Test_GetCardByID_NotFound() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
+	db, err := New(s.basePath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 
 	_, err = db.GetCardByID(99999999)
@@ -84,7 +75,7 @@ func (s *DBSuite) Test_GetCardByID_NotFound() {
 }
 
 func (s *DBSuite) Test_FindCardByName() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
+	db, err := New(s.basePath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 
 	exact, maybe, total, err := db.FindCardByName("青眼白龙", 0)
@@ -99,7 +90,7 @@ func (s *DBSuite) Test_FindCardByName() {
 }
 
 func (s *DBSuite) Test_FindCardByName_Pagination() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
+	db, err := New(s.basePath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 
 	exact, maybe1, total, err := db.FindCardByName("龙", 0)
@@ -116,7 +107,7 @@ func (s *DBSuite) Test_FindCardByName_Pagination() {
 }
 
 func (s *DBSuite) Test_FindCardsBySetName() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
+	db, err := New(s.basePath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 
 	results, total, err := db.FindCardsBySetName([]string{"英雄"}, pageSize, 0)
@@ -138,7 +129,7 @@ func (s *DBSuite) Test_FindCardsBySetName() {
 }
 
 func (s *DBSuite) Test_FindCardsBySetName_Pagination() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
+	db, err := New(s.basePath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 
 	maybe1, total, err := db.FindCardsBySetName([]string{"英雄"}, pageSize, 0)
@@ -154,7 +145,7 @@ func (s *DBSuite) Test_FindCardsBySetName_Pagination() {
 }
 
 func (s *DBSuite) Test_FindCardsBySetName_MultipleSetNames() {
-	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
+	db, err := New(s.basePath, "zh-CN")
 	s.Require().NoError(err, "New should not return error")
 
 	// Test searching with 2 set names: "栗子球" and "英雄"
