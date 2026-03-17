@@ -42,7 +42,11 @@ func (r *Repo) EnsureRepoUpToDate() (err error) {
 	if err := fl.Lock(); err != nil {
 		return err
 	}
-	defer func() { err = fl.Unlock() }()
+	defer func() {
+		if unlockErr := fl.Unlock(); unlockErr != nil && err == nil {
+			err = unlockErr
+		}
+	}()
 
 	// Double-check: re-read timestamp after acquiring lock
 	if !r.needsUpdate(lastUpdatePath) {

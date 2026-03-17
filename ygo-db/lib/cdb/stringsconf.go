@@ -62,7 +62,11 @@ func (db *DB) readSetName() error {
 	if err != nil {
 		return errors.Join(ErrOpenFile, err)
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {

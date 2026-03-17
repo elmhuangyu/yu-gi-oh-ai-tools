@@ -40,7 +40,11 @@ func New(basePath, lang string) (db *DB, err error) {
 	if err = db.lock.RLock(); err != nil {
 		return nil, err
 	}
-	defer func() { err = db.lock.Unlock() }()
+	defer func() {
+		if unlockErr := db.lock.Unlock(); unlockErr != nil && err == nil {
+			err = unlockErr
+		}
+	}()
 
 	err = db.readSetName()
 	if err != nil {
@@ -69,7 +73,11 @@ func (db *DB) GetCardByID(id uint64) (result *CardInfoForHuman, err error) {
 	if err = db.lock.RLock(); err != nil {
 		return nil, err
 	}
-	defer func() { err = db.lock.Unlock() }()
+	defer func() {
+		if unlockErr := db.lock.Unlock(); unlockErr != nil && err == nil {
+			err = unlockErr
+		}
+	}()
 
 	query := `
 		SELECT d.id, t.name, t.desc, d.atk, d.def, d.level, d.type, d.race, d.attribute, d.setcode
@@ -104,7 +112,11 @@ func (db *DB) GetCardsByIDs(ids []uint64) (result map[uint64]*CardInfoForHuman, 
 	if err = db.lock.RLock(); err != nil {
 		return nil, err
 	}
-	defer func() { err = db.lock.Unlock() }()
+	defer func() {
+		if unlockErr := db.lock.Unlock(); unlockErr != nil && err == nil {
+			err = unlockErr
+		}
+	}()
 
 	if len(ids) == 0 {
 		return make(map[uint64]*CardInfoForHuman), nil
@@ -126,7 +138,11 @@ func (db *DB) GetCardsByIDs(ids []uint64) (result map[uint64]*CardInfoForHuman, 
 	if err != nil {
 		return nil, err
 	}
-	defer func() { err = rows.Close() }()
+	defer func() {
+		if closeErr := rows.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	result = make(map[uint64]*CardInfoForHuman)
 	for rows.Next() {
@@ -156,7 +172,11 @@ func (db *DB) FindCardByName(name string, page int) (exact *CardInfoForHuman, ma
 	if err = db.lock.RLock(); err != nil {
 		return nil, nil, 0, err
 	}
-	defer func() { err = db.lock.Unlock() }()
+	defer func() {
+		if unlockErr := db.lock.Unlock(); unlockErr != nil && err == nil {
+			err = unlockErr
+		}
+	}()
 
 	const limitSize = 30
 	offset := page * limitSize
@@ -210,7 +230,11 @@ func (db *DB) FindCardByName(name string, page int) (exact *CardInfoForHuman, ma
 	if err != nil {
 		return nil, nil, 0, err
 	}
-	defer func() { err = rows.Close() }()
+	defer func() {
+		if closeErr := rows.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	for rows.Next() {
 		var card CardInfoInDB
@@ -240,7 +264,11 @@ func (db *DB) FindCardsBySetName(setNames []string, pageSize, page int) (results
 	if err = db.lock.RLock(); err != nil {
 		return nil, 0, err
 	}
-	defer func() { err = db.lock.Unlock() }()
+	defer func() {
+		if unlockErr := db.lock.Unlock(); unlockErr != nil && err == nil {
+			err = unlockErr
+		}
+	}()
 
 	offset := page * pageSize
 
@@ -313,7 +341,11 @@ func (db *DB) FindCardsBySetName(setNames []string, pageSize, page int) (results
 	if err != nil {
 		return nil, 0, err
 	}
-	defer func() { err = rows.Close() }()
+	defer func() {
+		if closeErr := rows.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	for rows.Next() {
 		var card CardInfoInDB
