@@ -18,7 +18,6 @@ type CardInfoForAI struct {
 	Type       string  `json:"type,omitempty" yaml:"type,omitempty"`
 	Archetypes string  `json:"archetypes,omitempty" yaml:"archetypes,omitempty"`
 	Count      int     `json:"count,omitempty" yaml:"count,omitempty"`
-	Deck       string  `json:"deck,omitempty" yaml:"deck,omitempty"`
 }
 
 type CardInfoForHuman struct {
@@ -32,6 +31,8 @@ type CardInfoForHuman struct {
 	Attribute optional.Option[string] `json:"attribute"`
 	Type      []string                `json:"type"`
 	SetNames  []string                `json:"setNames"`
+	Count     optional.Option[int]    `json:"count"`
+	Deck      optional.Option[string] `json:"deck"`
 }
 
 // CardInfoForHumanToCSV if a field is empty on all cards, skip the column.
@@ -51,7 +52,8 @@ func CardInfoForHumanToCSV(cards []*CardInfoForHuman) ([]string, [][]string) {
 	hasAttribute := false
 	hasType := false
 	hasSetNames := false
-
+	hasCount := false
+	hasDeck := false
 	for _, card := range cards {
 		if card.Name != "" {
 			hasName = true
@@ -79,6 +81,12 @@ func CardInfoForHumanToCSV(cards []*CardInfoForHuman) ([]string, [][]string) {
 		}
 		if len(card.SetNames) > 0 {
 			hasSetNames = true
+		}
+		if card.Count.IsSome() {
+			hasCount = true
+		}
+		if card.Deck.IsSome() {
+			hasDeck = true
 		}
 	}
 
@@ -110,6 +118,12 @@ func CardInfoForHumanToCSV(cards []*CardInfoForHuman) ([]string, [][]string) {
 	}
 	if hasSetNames {
 		headers = append(headers, "setNames")
+	}
+	if hasCount {
+		headers = append(headers, "count")
+	}
+	if hasDeck {
+		headers = append(headers, "deck")
 	}
 
 	// Second pass: build data rows
@@ -163,17 +177,24 @@ func CardInfoForHumanToCSV(cards []*CardInfoForHuman) ([]string, [][]string) {
 		if hasSetNames {
 			row = append(row, strings.Join(card.SetNames, "|"))
 		}
+		if hasCount {
+			if card.Count.IsSome() {
+				row = append(row, formatInt(card.Count.Unwrap()))
+			} else {
+				row = append(row, "")
+			}
+		}
+		if hasDeck {
+			if card.Deck.IsSome() {
+				row = append(row, card.Deck.Unwrap())
+			} else {
+				row = append(row, "")
+			}
+		}
 		rows = append(rows, row)
 	}
 
 	return headers, rows
-}
-
-func formatUint64(v uint64) string {
-	if v == 0 {
-		return ""
-	}
-	return fmt.Sprintf("%d", v)
 }
 
 func formatInt(v int) string {
@@ -207,6 +228,9 @@ func (s *CardInfoForHuman) ToCardInfoForAI() *CardInfoForAI {
 	if s.Attribute.IsSome() {
 		v := s.Attribute.Unwrap()
 		res.Attribute = &v
+	}
+	if s.Count.IsSome() {
+		res.Count = s.Count.Unwrap()
 	}
 
 	return res

@@ -45,6 +45,7 @@ func init() {
 	rootCmd.AddCommand(commands.GetCardByIDCmd)
 	rootCmd.AddCommand(commands.GetCardsByNameCmd)
 	rootCmd.AddCommand(commands.GetCardsByArchetypesCmd)
+	rootCmd.AddCommand(commands.GetCardsByYDKCmd)
 
 	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		// Validate lang flag
