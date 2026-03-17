@@ -29,7 +29,7 @@ description: 游戏王卡组完整分析流程的 parent skill。当用户提供
 ```
 {deck_name}_analysis/
 ├── TODO.md              # 进度追踪，每步完成后更新
-├── deck_raw.json        # Step 1 产物：MCP 原始返回数据
+├── deck_raw.csv         # Step 1 产物：CLI 原始返回数据（CSV格式）
 ├── deck_parsed.json     # Step 2 产物：deck-parser 输出
 ├── deck_analysis.json   # Step 3 产物：deck-analyzer 输出
 └── report.md            # Step 4 产物：最终人类可读报告
@@ -62,7 +62,7 @@ description: 游戏王卡组完整分析流程的 parent skill。当用户提供
 - 开始时间: {timestamp}
 
 ## 步骤
-- [ ] Step 1: 获取原始卡片数据 → deck_raw.json
+- [ ] Step 1: 获取原始卡片数据 → deck_raw.csv
 - [ ] Step 2: 解析卡组结构 → deck_parsed.json
 - [ ] Step 3: 对局分析 → deck_analysis.json
 - [ ] Step 4: 生成报告 → report.md
@@ -74,25 +74,28 @@ description: 游戏王卡组完整分析流程的 parent skill。当用户提供
 
 ### Step 2 — 获取原始卡片数据
 
-- 调用 `count-deck` 获取卡组规模
-- 调用 `get_cards_by_ydk` 获取所有卡片完整信息
+使用 `ygo-db-cli` CLI 工具获取卡片信息：
 
-将 MCP 工具的原始返回数据完整 dump 到 `deck_raw.json`。
+```bash
+ygo-db-cli get-cards-by-ydk -i {ydk文件路径} -o deck_raw.csv
+```
 
-> 保存原始数据的目的：如果后续解析逻辑有问题，可以直接重跑解析步骤，不需要重新调用 MCP。
+CLI 工具会将数据（CSV格式）完整 dump 到 `deck_raw.csv`。
+
+> 保存原始数据的目的：如果后续解析逻辑有问题，可以直接重跑解析步骤，不需要重新调用 CLI。
 
 完成后更新 `TODO.md`：
 ```markdown
-- [x] Step 1: 获取原始卡片数据 → deck_raw.json
+- [x] Step 1: 获取原始卡片数据 → deck_raw.csv
 ```
 
 ---
 
 ### Step 3 — 解析卡组结构
 
-读取 `deck_raw.json`，调用 `deck-parser` skill 进行卡组结构解析。
+读取 `deck_raw.csv`，调用 `deck-parser` skill 进行卡组结构解析。
 
-输入：`deck_raw.json`
+输入：`deck_raw.csv`
 输出：按 `deck-parser` skill 定义的 JSON schema 生成结果，dump 到 `deck_parsed.json`。
 
 完成后更新 `TODO.md`：
@@ -104,9 +107,9 @@ description: 游戏王卡组完整分析流程的 parent skill。当用户提供
 
 ### Step 4 — 对局分析
 
-读取 `deck_raw.json` 和 `deck_parsed.json`，调用 `deck-analyzer` skill 进行完整对局分析。
+读取 `deck_raw.csv` 和 `deck_parsed.json`，调用 `deck-analyzer` skill 进行完整对局分析。
 
-输入：`deck_raw.json` + `deck_parsed.json`
+输入：`deck_raw.csv` + `deck_parsed.json`
 输出：按 `deck-analyzer` skill 定义的 JSON schema 生成结果，dump 到 `deck_analysis.json`。
 
 完成后更新 `TODO.md`：

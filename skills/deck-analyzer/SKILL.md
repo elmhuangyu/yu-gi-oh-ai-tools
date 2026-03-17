@@ -1,20 +1,20 @@
 ---
 name: deck-analyzer
-description: 游戏王卡组对局分析 skill。接收 deck_raw.json 和 deck_parsed.json，对卡组进行系统化对局分析，输出带完整 reasoning 的分析 JSON。分析维度包括：展开多样性、先攻终场质量与弱点、系统性弱点、手坑敏感度、Chokepoint、后攻突破力、资源续航、六维评分。每个判断必须附带 reason。通常由 yugioh-deck-analyze 调用，输出为 deck_analysis.json。
+description: 游戏王卡组对局分析 skill。接收 deck_raw.csv 和 deck_parsed.json，对卡组进行系统化对局分析，输出带完整 reasoning 的分析 JSON。分析维度包括：展开多样性、先攻终场质量与弱点、系统性弱点、手坑敏感度、Chokepoint、后攻突破力、资源续航、六维评分。每个判断必须附带 reason。通常由 ygo-deck-analyze 调用，输出为 deck_analysis.json。
 ---
 
 # deck-analyzer
 
 ## 职责边界
 
-这个 skill **只做分析和判断**，不调用 MCP 工具。
+这个 skill **只做分析和判断**，不调用任何工具。
 
-- ✅ 接收 `deck_raw.json` 和 `deck_parsed.json` 作为输入
+- ✅ 接收 `deck_raw.csv` 和 `deck_parsed.json` 作为输入
 - ✅ 读取 `resources/handtraps.csv` 和 `resources/boardbreakers.csv` 作为分析基准
 - ✅ 对卡组进行多维度对局分析
 - ✅ 每个判断都必须附带 `reason`，说明依据
 - ✅ 输出六维评分（对照锚点标准）
-- ❌ 不调用任何 MCP 工具
+- ❌ 不调用任何工具
 - ❌ 不假设卡片效果（所有卡片信息来自输入文件）
 
 > **关键原则**：所有判断必须有 reason。reason 是这个 skill 的核心价值——让后续读取 JSON 的 agent 在转述时有依据，而不是重新推理或胡诌。
@@ -23,7 +23,7 @@ description: 游戏王卡组对局分析 skill。接收 deck_raw.json 和 deck_p
 
 ## 输入
 
-- `deck_raw.json`：MCP 原始卡片数据
+- `deck_raw.csv`：CLI 原始卡片数据（CSV格式）
 - `deck_parsed.json`：deck-parser 的结构化输出
 - `resources/handtraps.csv`：当前 meta 手坑列表，含效果摘要和分析重点
 - `resources/boardbreakers.csv`：当前 meta 解场卡列表，含效果摘要和分析重点
@@ -115,7 +115,7 @@ description: 游戏王卡组对局分析 skill。接收 deck_raw.json 和 deck_p
 对每个核心机制依赖，分析：
 - **依赖什么**：墓地 / 特召 / 检索加手 / 特定卡名联动 / 魔法 / 额外卡组
 - **被针对后能做什么**：完全停摆 / 大幅削弱但还能运作 / 有替代路线
-- **meta 出现频率**：`common` / `uncommon` / `rare`
+- **meta 出现频率**：`common` / `uncommon`
 
 ---
 

@@ -39,7 +39,7 @@ Step 4: Generate report → report.md
 ## Output Format
 
 Each analysis generates:
-- `deck_raw.json` - Raw MCP card data
+- `deck_raw.json` - Raw card data
 - `deck_parsed.json` - Structured deck information (engines, starters, extenders, hand traps)
 - `deck_analysis.json` - Comprehensive gameplay analysis with 6-dimensional scoring
 - `report.md` - Human-readable analysis report
@@ -54,7 +54,7 @@ The current skills are primarily in Chinese. Need to:
 - [ ] Ensure TCG terminology is used correctly (e.g., "hand trap" vs "手坑", "starter" vs "展开点", "board breaker" vs "解场卡")
 - [ ] Update reason field templates to use TCG-standard card names and terms
 
-Note: TCG database support is already covered by existing MCP tools.
+Note: TCG database support is already covered by existing ygo-db-cli tools.
 
 ### 2. Meta-Analyzer Skill
 
