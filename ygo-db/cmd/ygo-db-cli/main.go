@@ -43,6 +43,8 @@ func init() {
 		fmt.Sprintf("Language for card data: %v", cdb.SupportLanguages))
 
 	rootCmd.AddCommand(commands.GetCardByIDCmd)
+	rootCmd.AddCommand(commands.GetCardsByNameCmd)
+	rootCmd.AddCommand(commands.GetCardsByArchetypesCmd)
 
 	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		// Validate lang flag

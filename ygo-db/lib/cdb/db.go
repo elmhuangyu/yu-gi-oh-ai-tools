@@ -275,12 +275,11 @@ func (db *DB) FindCardByName(name string, page int) (*CardInfoForHuman, []*CardI
 	return exact, maybe, total, rows.Err()
 }
 
-func (db *DB) FindCardsBySetName(setNames []string, page int) ([]*CardInfoForHuman, int, error) {
+func (db *DB) FindCardsBySetName(setNames []string, pageSize, page int) ([]*CardInfoForHuman, int, error) {
 	db.lock.RLock()
 	defer db.lock.Unlock()
 
-	const limitSize = 30
-	offset := page * limitSize
+	offset := page * pageSize
 
 	if len(setNames) == 0 || len(setNames) > 4 {
 		return nil, 0, nil
@@ -346,7 +345,7 @@ func (db *DB) FindCardsBySetName(setNames []string, page int) ([]*CardInfoForHum
 
 	// Add ordering and pagination
 	query += " ORDER BY t.name LIMIT ? OFFSET ?"
-	args = append(args, limitSize, offset)
+	args = append(args, pageSize, offset)
 
 	rows, err := db.sqlite.Query(query, args...)
 	if err != nil {

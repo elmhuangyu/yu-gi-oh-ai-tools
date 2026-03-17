@@ -10,6 +10,8 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+const pageSize = 30
+
 type DBSuite struct {
 	suite.Suite
 	basePath string
@@ -117,7 +119,7 @@ func (s *DBSuite) Test_FindCardsBySetName() {
 	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
-	results, total, err := db.FindCardsBySetName([]string{"英雄"}, 0)
+	results, total, err := db.FindCardsBySetName([]string{"英雄"}, pageSize, 0)
 	s.Require().NoError(err, "FindCardsBySetName should not return error")
 	s.Assert().Greater(total, 0, "should have results for 英雄 set")
 	s.Assert().LessOrEqual(len(results), 30, "results should be limited to 30 for first page")
@@ -139,12 +141,12 @@ func (s *DBSuite) Test_FindCardsBySetName_Pagination() {
 	db, err := New(git.NewRepo(localPath, remoteURL), s.basePath, "zh-CN", false)
 	s.Require().NoError(err, "New should not return error")
 
-	maybe1, total, err := db.FindCardsBySetName([]string{"英雄"}, 0)
+	maybe1, total, err := db.FindCardsBySetName([]string{"英雄"}, pageSize, 0)
 	s.Require().NoError(err, "FindCardsBySetName should not return error")
 	s.Assert().LessOrEqual(len(maybe1), 30, "first page may have less than 30 results")
 
 	if total > 30 {
-		maybe2, total2, err := db.FindCardsBySetName([]string{"英雄"}, 1)
+		maybe2, total2, err := db.FindCardsBySetName([]string{"英雄"}, pageSize, 1)
 		s.Require().NoError(err, "FindCardsBySetName with offset should not return error")
 		s.Assert().Equal(total, total2)
 		s.Assert().Greater(len(maybe2), 0, "second page should have results")
@@ -157,7 +159,7 @@ func (s *DBSuite) Test_FindCardsBySetName_MultipleSetNames() {
 
 	// Test searching with 2 set names: "栗子球" and "英雄"
 	// Should return cards that have BOTH set names (AND logic)
-	results, total, err := db.FindCardsBySetName([]string{"栗子球", "英雄"}, 0)
+	results, total, err := db.FindCardsBySetName([]string{"栗子球", "英雄"}, pageSize, 0)
 	s.Require().NoError(err, "FindCardsBySetName with multiple set names should not return error")
 	s.Assert().Greater(total, 0, "should have results for 栗子球+英雄 set combination")
 

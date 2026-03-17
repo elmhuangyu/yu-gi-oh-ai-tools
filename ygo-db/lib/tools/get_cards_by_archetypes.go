@@ -25,7 +25,8 @@ type GetCardsByArchetypesOutput struct {
 
 // GetCardsByArchetypes retrieves cards by archetype/set names using the provided database.
 func GetCardsByArchetypes(db *cdb.DB, archetypes []string, page int) ([]*cdb.CardInfoForAI, int, error) {
-	cards, total, err := db.FindCardsBySetName(archetypes, page)
+	const pageSize = 30
+	cards, total, err := db.FindCardsBySetName(archetypes, pageSize, page)
 	if err != nil {
 		return nil, 0, err
 	}
