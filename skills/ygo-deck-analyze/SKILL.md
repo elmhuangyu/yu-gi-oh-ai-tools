@@ -124,6 +124,36 @@ CLI 工具会将数据（CSV格式）完整 dump 到 `deck_raw.csv`。
 
 ---
 
+### Step 4.5 — 一致性校验（Validation）
+
+在生成报告前，执行以下校验。**如果校验失败，不得进入 Step 5，必须先修正。**
+
+**校验逻辑**：
+
+1. 从 `deck_parsed.json` 中提取所有 endboard 卡片名称：
+   - `maindeck_endboard` 中的所有卡片
+   - `extradeck_monsters` 中 role 为 `endboard` 或 `both` 的所有卡片
+
+2. 从 `deck_analysis.json` 的 `first_turn_board.typical_endboard` 中提取所有已出现的卡片名称（遍历 core / synergy_tech / protection 三个数组）
+
+3. 对比两个列表，找出**在 Parser 中标记为 endboard 但在 Analyzer 的终场描述中完全未出现的卡片**
+
+4. 如果存在缺失卡片：
+   - 输出警告：`[VALIDATION FAILED] 以下 endboard 卡片未在终场分析中出现：{卡名列表}`
+   - **重新触发 deck-analyzer 的 Step 2**，要求对缺失卡片补充分析并更新 `deck_analysis.json`
+   - 校验通过后才进入 Step 5
+
+5. 如果无缺失：
+   - 输出：`[VALIDATION PASSED] 所有 endboard 卡片均已在终场分析中覆盖`
+   - 直接进入 Step 5
+
+完成后更新 `TODO.md`：
+```markdown
+- [x] Step 4.5: 一致性校验 → PASSED / FAILED+修正
+```
+
+---
+
 ### Step 5 — 生成人类可读报告
 
 读取 `deck_parsed.json` 和 `deck_analysis.json`，生成自然语言分析报告，dump 到 `report.md`。
@@ -177,7 +207,6 @@ CLI 工具会将数据（CSV格式）完整 dump 到 `deck_raw.csv`。
 
 | 终场卡片 | 作用 |
 |---|---|
-{终场卡列表}
 
 **抗性**：{抗性说明}  
 **自锁风险**：{self_lock_risk}

@@ -73,6 +73,8 @@ description: 游戏王卡组对局分析 skill。接收 deck_raw.csv 和 deck_pa
 
 ### Step 2 — 先攻终场分析
 
+你需要根据`maindeck_endboard`和`extradeck_monsters`分析可能的先攻终场。
+
 **终场类型判断**：
 - `NEGATE_BOARD`：以多重效果无效为主
 - `FLOODGATE_BOARD`：以规则限制（锁特召、锁属性等）为主
