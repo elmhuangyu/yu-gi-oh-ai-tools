@@ -163,8 +163,8 @@ CLI 工具会将数据（CSV格式）完整 dump 到 `deck_raw.csv`。
 
 ## 起手稳定性
 
-- Starter 开出率：{starter_open_rate}%
-- 手坑开出率：{handtrap_open_rate}%
+- Starter（{starter_total_copies}张）开出率：刚好1张 {starter_exactly_1} ／ 刚好2张 {starter_exactly_2} ／ 至少1张 {starter_at_least_1} ／ 至少2张 {starter_at_least_2}
+- 手坑（{handtrap_total_copies}张）开出率：刚好1张 {handtrap_exactly_1} ／ 刚好2张 {handtrap_exactly_2} ／ 至少1张 {handtrap_at_least_1} ／ 至少2张 {handtrap_at_least_2}
 
 {用1-2句话说明稳定性的含义，例如"平均每4手有3手能正常启动"}
 

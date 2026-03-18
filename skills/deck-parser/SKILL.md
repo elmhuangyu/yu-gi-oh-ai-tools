@@ -109,9 +109,7 @@ archetype 字段相同的卡归入同一 engine。这是最弱的归组依据，
 
 ### Step 3 — 起手概率计算
 
-统计 starter 总张数和手坑总张数，调用 `starter-probability`，计算：
-- 起手至少一张 starter 的概率
-- 起手至少一张手坑的概率
+统计 starter 总张数和手坑总张数，调用 `starter-probability`，计算。
 
 ---
 
@@ -231,10 +229,22 @@ archetype 字段相同的卡归入同一 engine。这是最弱的归组依据，
     }
   ],
 
-  // 起手概率，来自 starter-probability
+  // 起手概率，来自 starter-probability，直接保留 tool 原始输出的完整分布
   "probability": {
-    "starter_open_rate": 0.0,   // 0.0–1.0，起手至少一张 starter 的概率
-    "handtrap_open_rate": 0.0   // 0.0–1.0，起手至少一张手坑的概率
+    "starter": {
+      "total_copies": 0,        // starter 总张数，即 tool 的 target_count
+      "exactly_1": "0.00%",     // 刚好摸到 1 张的概率，来自 tool 输出的 probabilities.1
+      "exactly_2": "0.00%",     // 刚好摸到 2 张的概率，来自 tool 输出的 probabilities.2
+      "at_least_1": "0.00%",    // 至少摸到 1 张的概率，来自 tool 输出的 at_least_1
+      "at_least_2": "0.00%"     // 至少摸到 2 张的概率，来自 tool 输出的 at_least_2
+    },
+    "handtrap": {
+      "total_copies": 0,
+      "exactly_1": "0.00%",
+      "exactly_2": "0.00%",
+      "at_least_1": "0.00%",
+      "at_least_2": "0.00%"
+    }
   }
 }
 ```
