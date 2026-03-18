@@ -1,82 +1,93 @@
 {
   "deck_profile": {
-    "archetype": "阿匹卜 / 王家的神殿 (Apophis / Temple of the Kings)",
+    "archetype": "王家的神殿 / 阿匹卜陷阱怪兽",
     "deck_type": "control",
     "difficulty": "medium"
   },
   "deck_structure": {
     "main": 43,
-    "extra": 15,
+    "extra": 13,
     "side": 15
   },
   "engines": [
     {
-      "name": "王家的神殿引擎",
+      "name": "王家的神殿与阿匹卜引擎",
       "role": "primary",
       "cards": [
         {
-          "name": "王之遗宝祭祀圣域",
-          "copies": 3,
-          "types": ["starter"],
-          "once_per_turn_type": "card_name_once",
-          "effect_summary": "检索阿匹卜及有王家的神殿记述的怪兽，作为神殿使用。"
-        },
-        {
-          "name": "带刻印者",
-          "copies": 3,
-          "types": ["starter"],
-          "once_per_turn_type": "card_name_once",
-          "effect_summary": "检索王家的神殿或相关魔陷。"
+          "name": "守护兽 塞勒凯特",
+          "copies": 1,
+          "types": ["endboard"],
+          "once_per_turn_type": "once_per_turn",
+          "join_reason": "效果引用「王家的神殿」",
+          "endboard_role": "检索「王家的神殿」及相关魔陷；通过战斗破坏对手怪兽并增攻",
+          "effect_summary": "检索核心魔陷，与王家的神殿配合进行强力战斗干扰"
         },
         {
           "name": "王家的神殿",
           "copies": 1,
-          "types": ["engine_core"],
+          "types": ["endboard"],
+          "once_per_turn_type": "once_per_turn",
+          "endboard_role": "允许陷阱卡在盖放回合发动；特召额外/主卡组强力怪兽",
+          "effect_summary": "卡组核心，赋予陷阱卡即时发动能力"
+        },
+        {
+          "name": "淀神 阿匹卜",
+          "copies": 3,
+          "types": ["endboard"],
+          "once_per_turn_type": "unlimited",
+          "join_reason": "archetype名引用「阿匹卜」",
+          "endboard_role": "特召后可无效对方场上表侧表示卡的效果",
+          "effect_summary": "陷阱怪兽，根据场上永续陷阱数量提供群体无效效果"
+        },
+        {
+          "name": "阿匹卜之蛇神",
+          "copies": 2,
+          "types": ["extender"],
           "once_per_turn_type": "card_name_once",
-          "effect_summary": "允许陷阱卡盖放回合发动，可调度额外怪兽。"
+          "join_reason": "archetype名引用「阿匹卜」",
+          "effect_summary": "特召后盖放卡组「阿匹卜」陷阱，且该卡当回合可发动；送墓检索阿匹卜化神"
+        },
+        {
+          "name": "带刻印者",
+          "copies": 3,
+          "types": ["starter", "endboard"],
+          "once_per_turn_type": "card_name_once",
+          "join_reason": "效果引用「王家的神殿」",
+          "endboard_role": "为「王家的神殿」和「阿匹卜」怪兽提供抗性和保护",
+          "effect_summary": "检索「王家的神殿」或相关卡，并在场时提供核心卡片保护"
+        },
+        {
+          "name": "王之遗宝祭祀圣域",
+          "copies": 3,
+          "types": ["starter", "endboard"],
+          "once_per_turn_type": "card_name_once",
+          "join_reason": "功能性产出「阿匹卜」",
+          "endboard_role": "场上当作「王家的神殿」使用；检索相关怪兽",
+          "effect_summary": "场地魔法，补充王家的神殿副本并盖放阿匹卜陷阱"
         },
         {
           "name": "裁决的阿努比斯",
           "copies": 2,
-          "types": ["extender", "utility"],
+          "types": ["starter"],
           "once_per_turn_type": "card_name_once",
-          "effect_summary": "检索刻印者，墓地有神殿或陷阱时可特召并破坏卡片。"
-        },
-        {
-          "name": "守护兽 塞勒凯特",
-          "copies": 1,
-          "types": ["utility"],
-          "once_per_turn_type": "once_per_turn",
-          "effect_summary": "检索神殿或记述神殿的魔法卡，提升打点。"
+          "join_reason": "效果引用「王家的神殿」",
+          "effect_summary": "丢弃检索「带刻印者」，墓地可特召并反制对手破坏魔陷的操作"
         }
       ],
       "normal_summon_dependent": true,
       "resource_conflicts": null
     },
     {
-      "name": "阿匹卜陷阱怪兽引擎",
-      "role": "secondary",
+      "name": "欢聚友伴 (Multchummy) 包",
+      "role": "package",
       "cards": [
         {
-          "name": "阿匹卜之蛇神",
-          "copies": 2,
-          "types": ["starter", "extender"],
-          "once_per_turn_type": "card_name_once",
-          "effect_summary": "特召并盖放另一张阿匹卜陷阱，被送去墓地检索化神。"
-        },
-        {
-          "name": "淀神 阿匹卜",
+          "name": "欢聚友伴·茸茸长尾山雀",
           "copies": 3,
-          "types": ["extender", "utility"],
-          "once_per_turn_type": "unlimited",
-          "effect_summary": "特召并根据永续陷阱数量无效对方卡片效果。"
-        },
-        {
-          "name": "圣神蛇 阿匹卜",
-          "copies": 2,
-          "types": ["endboard_monster"],
-          "once_per_turn_type": "once_per_turn",
-          "effect_summary": "回收墓地阿匹卜陷阱，并在陷阱发动时破坏卡片。"
+          "types": ["handtrap"],
+          "once_per_turn_type": "card_name_once",
+          "effect_summary": "对方从卡组/额外特召时抽卡，提供强力资源补给"
         }
       ],
       "normal_summon_dependent": false,
@@ -85,125 +96,50 @@
   ],
   "starters": {
     "cards": [
-      {
-        "name": "王之遗宝祭祀圣域",
-        "copies": 3,
-        "once_per_turn_type": "card_name_once",
-        "effect_summary": "场地检索，核心启动点。"
-      },
-      {
-        "name": "带刻印者",
-        "copies": 3,
-        "once_per_turn_type": "card_name_once",
-        "effect_summary": "通召或特召检索神殿，展开核心。"
-      },
-      {
-        "name": "星球改造",
-        "copies": 1,
-        "once_per_turn_type": "card_name_once",
-        "effect_summary": "检索场地启动点。"
-      }
+      { "name": "带刻印者", "copies": 3, "once_per_turn_type": "card_name_once", "effect_summary": "检索核心魔陷" },
+      { "name": "王之遗宝祭祀圣域", "copies": 3, "once_per_turn_type": "card_name_once", "effect_summary": "盖放阿匹卜并检索怪兽" },
+      { "name": "星球改造", "copies": 1, "once_per_turn_type": "unlimited", "effect_summary": "检索场地" },
+      { "name": "裁决的阿努比斯", "copies": 2, "once_per_turn_type": "card_name_once", "effect_summary": "检索带刻印者" }
     ],
-    "total_copies": 7
+    "total_copies": 9
   },
   "extenders": {
     "cards": [
-      {
-        "name": "淀神 阿匹卜",
-        "copies": 3,
-        "once_per_turn_type": "unlimited",
-        "effect_summary": "二速特召并提供妨碍。"
-      },
-      {
-        "name": "苦纹样的土像",
-        "copies": 1,
-        "once_per_turn_type": "unlimited",
-        "effect_summary": "陷阱特召触发破坏，保护其他陷阱怪兽。"
-      },
-      {
-        "name": "天狱之王",
-        "copies": 1,
-        "once_per_turn_type": "card_name_once",
-        "effect_summary": "保护后场并检索盖放魔陷。"
-      }
+      { "name": "天狱之王", "copies": 1, "once_per_turn_type": "card_name_once", "effect_summary": "特召并盖放卡组魔陷" },
+      { "name": "阿匹卜之蛇神", "copies": 2, "once_per_turn_type": "card_name_once", "effect_summary": "盖放额外阿匹卜" }
     ],
-    "total_copies": 5
+    "total_copies": 3
   },
   "handtraps": {
     "cards": [
-      {
-        "name": "灰流丽",
-        "copies": 3,
-        "once_per_turn_type": "card_name_once",
-        "effect_summary": "无效对方检索、特召或堆墓。"
-      },
-      {
-        "name": "无限泡影",
-        "copies": 3,
-        "once_per_turn_type": "card_name_once",
-        "effect_summary": "无效对方怪兽效果，可从手牌发动。"
-      },
-      {
-        "name": "欢聚友伴·茸茸长尾山雀",
-        "copies": 3,
-        "once_per_turn_type": "card_name_once",
-        "effect_summary": "对方特召时抽卡，用于过牌。"
-      },
-      {
-        "name": "原始生命态 尼比鲁",
-        "copies": 2,
-        "once_per_turn_type": "card_name_once",
-        "effect_summary": "解场妨碍对方爆展。"
-      }
+      { "name": "灰流丽", "copies": 3, "once_per_turn_type": "card_name_once", "effect_summary": "无效检索/特召/送墓效果" },
+      { "name": "原始生命态 尼比鲁", "copies": 2, "once_per_turn_type": "card_name_once", "effect_summary": "解放全场大召唤怪兽" },
+      { "name": "无限泡影", "copies": 3, "once_per_turn_type": "unlimited", "effect_summary": "无效怪兽效果" },
+      { "name": "灵王的波动", "copies": 1, "once_per_turn_type": "card_name_once", "effect_summary": "反击特召相关效果" },
+      { "name": "欢聚友伴·茸茸长尾山雀", "copies": 3, "once_per_turn_type": "card_name_once", "effect_summary": "资源抽卡" }
     ],
-    "total_copies": 11
+    "total_copies": 12
   },
   "boardbreakers_and_floodgates": {
     "cards": [
-      {
-        "name": "颉颃胜负",
-        "copies": 3,
-        "type": "boardbreaker",
-        "once_per_turn_type": "card_name_once",
-        "effect_summary": "后手强力突破，除外对方全场卡片。"
-      },
-      {
-        "name": "超融合",
-        "copies": 2,
-        "type": "boardbreaker",
-        "once_per_turn_type": "unlimited",
-        "effect_summary": "用对方场上怪兽进行融合，无法被连锁。"
-      }
+      { "name": "颉颃胜负", "copies": 3, "type": "boardbreaker", "once_per_turn_type": "unlimited", "effect_summary": "除外对方场上大量卡片" },
+      { "name": "超融合", "copies": 2, "type": "boardbreaker", "once_per_turn_type": "unlimited", "effect_summary": "利用对方怪兽融合" },
+      { "name": "异次元竞技场", "copies": 1, "type": "floodgate", "once_per_turn_type": "unlimited", "effect_summary": "全场除外效果" }
     ]
   },
   "extradeck_monsters": [
-    {
-      "name": "圣神蛇 阿匹卜",
-      "copies": 2,
-      "role": "endboard_monster",
-      "effect_summary": "引擎核心终场，资源回收与破坏。"
-    },
-    {
-      "name": "影法师 大礼帽野兔",
-      "copies": 2,
-      "role": "mid_material",
-      "effect_summary": "调度陷阱怪兽，提供破坏妨碍。"
-    },
-    {
-      "name": "S：P小夜骑士",
-      "copies": 1,
-      "role": "utility",
-      "effect_summary": "泛用解场与躲避效果。"
-    },
-    {
-      "name": "天霆号 阿宙斯",
-      "copies": 1,
-      "role": "utility",
-      "effect_summary": "超量战斗后全场扫墓解场。"
-    }
+    { "name": "圣神蛇 阿匹卜", "copies": 2, "role": "endboard", "effect_summary": "回收陷阱并提供炸卡干扰" },
+    { "name": "影法师 大礼帽野兔", "copies": 2, "role": "both", "effect_summary": "盖放陷阱怪兽并提供炸卡" },
+    { "name": "捕食植物 犀角龙", "copies": 1, "role": "endboard", "effect_summary": "无效带指示物怪兽的效果" },
+    { "name": "沼地的泥龙王", "copies": 1, "role": "endboard", "effect_summary": "提供属性保护" }
+  ],
+  "maindeck_endboard": [
+    { "name": "淀神 阿匹卜", "copies": 3, "card_type": "trap_monster", "once_per_turn_type": "unlimited", "endboard_role": "无效对手场上卡片效果", "effect_summary": "核心干扰点" },
+    { "name": "带刻印者", "copies": 3, "card_type": "effect_monster", "once_per_turn_type": "card_name_once", "endboard_role": "保护神殿和阿匹卜不被破坏", "effect_summary": "核心护航点" },
+    { "name": "苦纹样的土像", "copies": 1, "card_type": "trap_monster", "once_per_turn_type": "unlimited", "endboard_role": "陷阱怪兽特召时炸卡", "effect_summary": "解场干扰点" }
   ],
   "probability": {
-    "starter_open_rate": 0.6084,
-    "handtrap_open_rate": 0.7908
+    "starter_open_rate": 0.7109,
+    "handtrap_open_rate": 0.8235
   }
 }
