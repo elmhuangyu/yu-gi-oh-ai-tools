@@ -7,40 +7,41 @@
     "starter_width": {
       "independent_starter_count": 4,
       "routes_are_distinct": false,
-      "reason": "主要启动件包括「带刻印者」、「王之遗宝祭祀圣域」、「星球改造」和「裁决的阿努比斯」。虽然种类较多，但最终目的都是检索「王家的神殿」或直接盖放「阿匹卜」陷阱，路线高度重叠。"
+      "reason": "带刻印者、王之遗宝、裁决阿努比斯、阿匹卜之蛇神均指向王家神殿+陷阱怪兽的组合，路线高度重合。"
     },
     "mid_combo_branching": {
       "has_single_point_of_failure": true,
-      "single_point_card": "王家的神殿",
-      "branch_points": [],
-      "reason": "整套卡组的先攻展开完全依赖「王家的神殿」让陷阱卡在盖放回合发动的能力。如果神殿被无效或破坏，卡组将退化为传统的慢速陷阱卡组。"
+      "single_point_card": "影法师 大礼帽野兔",
+      "branch_points": ["通过影法师盖放苦纹样或淀神"],
+      "reason": "影法师是卡组从卡组调度核心陷阱怪兽的关键中转点，一旦被打断，后续联动能力大幅削弱。"
     },
     "endboard_accessibility": {
       "full_combo_interactions": 4,
       "partial_combo_interactions": 1,
       "has_tiered_endboard": true,
-      "reason": "完美展开可达成阿匹卜无效+圣神蛇炸卡+土像炸卡；若只有神殿和一张陷阱，则仅有一次干扰。存在明显的性能梯度。"
+      "reason": "完整展开可达成淀神无效+苦纹样炸卡+圣神蛇炸卡；残局通常仅能依靠单张陷阱怪兽的阻抗。"
     },
     "overall_verdict": "single_route",
-    "overall_reason": "路线单一，核心节点「王家的神殿」一旦失守，先攻压制力大幅下降。"
+    "overall_reason": "核心逻辑完全围绕王家神殿与陷阱怪兽的配合，缺乏跨系统的第二路线。"
   },
   "first_turn_board": {
     "board_type": "MIXED_BOARD",
     "typical_endboard": [
-      { "card_name": "王家的神殿", "role": "赋予陷阱即时发动权" },
-      { "card_name": "带刻印者", "role": "为神殿和阿匹卜提供抗性保护" },
-      { "card_name": "淀神 阿匹卜", "role": "根据永续陷阱数量无效对方卡片效果" },
-      { "card_name": "圣神蛇 阿匹卜", "role": "回收墓地陷阱并提供炸卡干扰" },
-      { "card_name": "天狱之王", "role": "保护后场里侧表示卡片" }
+      { "card_name": "淀神 阿匹卜", "role": "场上有其他永续陷阱时提供无效效果" },
+      { "card_name": "苦纹样的土像", "role": "陷阱怪兽特召时炸卡，提供对象抗性" },
+      { "card_name": "圣神蛇 阿匹卜", "role": "陷阱发动时炸卡，回收资源" },
+      { "card_name": "王家的神殿", "role": "允许盖放回合发动陷阱，维持阵型" },
+      { "card_name": "S：P小夜骑士", "role": "提供除外干扰（若用额外怪兽连接召唤）或躲避效果" },
+      { "card_name": "No.41 泥睡魔兽 睡梦貘", "role": "Plan B 压制手段，在资源不足以达成陷阱联动时站场争取时间" }
     ],
-    "interaction_count": 3,
+    "interaction_count": 5,
     "interaction_profile": {
       "monster_negate_count": 1,
       "spell_trap_negate_count": 0,
       "resistances": {
         "targeting": true,
-        "destruction": true,
-        "battle": true,
+        "destruction": false,
+        "battle": false,
         "source": "persistent"
       },
       "lock_effects": []
@@ -50,69 +51,74 @@
       "partial_board_possible": true,
       "has_followup_resources": true,
       "can_attack": true,
-      "self_lock_risk": "灵王的波动发动后会锁属性效果发动"
+      "self_lock_risk": "灵王的波动发动后限制属性"
     }
   },
   "endboard_vulnerability": {
     "board_breaker_threats": [
       {
-        "threat": "颉颃胜负",
+        "threat": "鹰身女妖的羽毛扫",
         "effectiveness": "highly_effective",
-        "reason": "作为陷阱卡组，极度依赖后场堆叠。颉颃胜负能无视抗性逼迫玩家只留一张卡，对该卡组是毁灭性的。"
-      },
-      {
-        "threat": "冥王结界波",
-        "effectiveness": "highly_effective",
-        "reason": "无效化场上所有怪兽效果，包括提供保护的「带刻印者」和提供无效的「阿匹卜」，使其变为单纯的白板怪兽。"
+        "reason": "终场核心全是永续陷阱性质的怪兽，一吹即崩，且主卡组缺乏魔陷保护手段。"
       },
       {
         "threat": "闪电风暴",
+        "effectiveness": "highly_effective",
+        "reason": "同羽毛扫，后场破坏对陷阱怪兽是毁灭性的。"
+      },
+      {
+        "threat": "颉颃胜负",
+        "effectiveness": "highly_effective",
+        "reason": "终场卡片数量多且全在场上，颉颃能强行清场且不触发裁决阿努比斯的炸卡效果。"
+      },
+      {
+        "threat": "冥王结界波",
         "effectiveness": "partially_effective",
-        "reason": "虽然有「带刻印者」和「天狱之王」的保护，但若对手先通过怪兽效果骗出保护或先解掉保护怪兽，后场极易被清空。"
+        "reason": "虽然无效了怪兽效果，但陷阱本身可能仍留在场上，下回合可继续运作。"
       }
     ],
-    "biggest_threat": "颉颃胜负",
-    "biggest_threat_reason": "陷阱怪兽展开后依然占据大量魔陷格，且由于缺乏多重反击陷阱（仅1张通告和1张神宣），很难阻止从手牌发动的颉颃胜负。"
+    "biggest_threat": "后场大规模去除",
+    "biggest_threat_reason": "陷阱怪兽的双重身份导致其同时吃怪兽去除和魔陷去除，而大规模魔陷去除通常成本更低且更彻底。"
   },
   "systemic_vulnerabilities": [
     {
-      "dependency": "高度依赖「王家的神殿」效果",
-      "critical_cards_at_risk": ["王家的神殿", "王之遗宝祭祀圣域"],
+      "dependency": "依赖王家的神殿",
+      "critical_cards_at_risk": ["王家的神殿", "带刻印者"],
       "lock_type": "特定机制封锁",
-      "impact_if_countered": "若无法维持神殿在场，陷阱卡需等一回合，失去先攻压制力。",
+      "impact_if_countered": "若神殿无法发挥作用，所有陷阱需等一回合，失去先攻优势并极易被突破。",
       "meta_prevalence": "common"
     },
     {
-      "dependency": "依赖魔陷区域特召怪兽",
-      "critical_cards_at_risk": ["淀神 阿匹卜", "阿匹卜之蛇神", "苦纹样的土像"],
+      "dependency": "格子依赖",
+      "critical_cards_at_risk": ["所有陷阱怪兽"],
       "lock_type": "特召封锁",
-      "impact_if_countered": "无法将陷阱变为怪兽，不仅失去干扰，也无法站场阻挡攻击。",
-      "meta_prevalence": "common"
+      "impact_if_countered": "陷阱怪兽同时占用魔陷格和怪兽格，格子紧张限制了资源堆叠上限。",
+      "meta_prevalence": "uncommon"
     }
   ],
   "handtrap_vulnerability": {
     "analysis": [
       {
         "handtrap": "灰流丽",
-        "impact": "significant",
-        "timing": "「带刻印者」召唤发动检索效果时",
-        "reason": "打断神殿的获取是最高优先级的阻断点。",
+        "impact": "critical",
+        "timing": "带刻印者检索神殿或王之遗宝检索怪兽时",
+        "reason": "卡组高度依赖神殿启动，断了神殿的来源基本宣告停转。",
         "has_counter": true,
         "counter_card": "墓穴的指名者"
       },
       {
         "handtrap": "无限泡影",
         "impact": "significant",
-        "timing": "「带刻印者」发动检索效果或「阿匹卜」特召发动无效效果时",
-        "reason": "无效化检索导致无法展开，无效化终场干扰导致防御崩溃。",
-        "has_counter": true,
-        "counter_card": "抹杀之指名者"
+        "timing": "影法师 大礼帽野兔 发动效果时",
+        "reason": "影法师是卡组调度资源的关键点，被无效会导致终场质量严重缩水。",
+        "has_counter": false,
+        "counter_card": null
       },
       {
-        "handtrap": "小丑与锁鸟",
+        "handtrap": "欢聚友伴·茸茸长尾山雀",
         "impact": "significant",
-        "timing": "在第一次检索后（如星球改造或祭祀圣域）",
-        "reason": "该卡组包含多张检索卡，被锁后后续检索（如裁决的阿努比斯丢弃检索）将失效。",
+        "timing": "陷阱怪兽连环特召时",
+        "reason": "卡组展开包含多次特召，会给对方提供大量手牌资源。",
         "has_counter": false,
         "counter_card": null
       }
@@ -120,65 +126,65 @@
   },
   "chokepoints": [
     {
-      "step": "第一步：获取并激活「王家的神殿」",
-      "card_involved": "带刻印者 / 王之遗宝祭祀圣域",
-      "why_critical": "没有神殿，所有陷阱怪兽都是死后的白板，无法当回合转化为干扰。",
-      "vulnerable_to": ["灰流丽", "幽鬼兔", "无限泡影"],
-      "has_alternate_route": true,
-      "alternate_route_description": "手中已有神殿时，可改用检索位获取其他保护或干扰卡。"
+      "step": "连接召唤 影法师 大礼帽野兔 并发动效果",
+      "card_involved": "影法师 大礼帽野兔",
+      "why_critical": "它是从卡组盖放苦纹样或淀神的关键手段，没有它无法形成多重炸卡/无效联动。",
+      "vulnerable_to": ["无限泡影", "效果遮蒙者"],
+      "has_alternate_route": false,
+      "alternate_route_description": null
     }
   ],
   "going_second": {
     "board_breaking_tools": [
-      { "card": "颉颃胜负", "function": "清空对手场面" },
-      { "card": "超融合", "function": "利用对方怪兽作为素材解场并站场" },
-      { "card": "无限泡影", "function": "手发无效关键干扰" }
+      { "card": "颉颃胜负", "function": "无视抗性清理对方场面" },
+      { "card": "超融合", "function": "无视发动限制解场并站怪" },
+      { "card": "魔炮战机 达磨羯磨", "function": "强行让对方怪兽里侧或送墓" }
     ],
     "breaking_efficiency": "one_for_many",
-    "post_break_followup": "利用剩余手牌快速铺设神殿+陷阱阵线",
-    "otk_potential": "较低，依赖圣神蛇（2800）和塞勒凯特（2500+）多回合磨血"
+    "post_break_followup": "依靠神殿支持，可以在解场后立即盖放并启动自己的陷阱阵型。",
+    "otk_potential": "较低，主要靠裁决阿努比斯的3000打点和圣神蛇的2800打点磨血。"
   },
   "grind_game": {
-    "search_engine": "「王之遗宝祭祀圣域」每回合可检索相关怪兽",
-    "graveyard_loop": "「圣神蛇 阿匹卜」融合特召后可回收墓地3张陷阱，续航能力极强",
-    "unlimited_effect_exploitation": "「淀神 阿匹卜」和「苦纹样的土像」的效果无卡名一回合一次限制，配合神殿可在同一回合多次触发炸卡/无效",
-    "turn3_viability": "只要核心阵线不崩，第三回合通常能通过圣神蛇完成资源回收并反扑",
+    "search_engine": "王之遗宝和带刻印者的检索链",
+    "graveyard_loop": "圣神蛇回收墓地阿匹卜，裁决阿努比斯从墓地特召并回收资源到卡组",
+    "unlimited_effect_exploitation": "苦纹样的土像炸卡无次数限制，只要有陷阱怪兽跳出来就能炸。",
+    "turn3_viability": "非常强，只要神殿还在，每回合都能刷新陷阱资源。",
     "is_one_shot": false
   },
   "strengths": [
-    "拥有极强的资源回收能力（圣神蛇一次回3张）",
-    "核心怪兽拥有优秀的被动抗性（带刻印者保护神殿和阿匹卜）",
-    "陷阱即时发动机制能打对手一个措手不及"
+    "强大的长局干扰能力，苦纹样配合圣神蛇能每回合多次解场。",
+    "陷阱怪兽具有较高的防御力，苦纹样提供对象抗性使对手难以精准去除。",
+    "资源回收能力出色，能有效应对消耗战。"
   ],
   "weaknesses": [
-    "极度怕颉颃胜负等群体解场卡",
-    "单点依赖「王家的神殿」，一旦被针对则节奏全无",
-    "爆发输出不足，斩杀较慢"
+    "对大规模后场去除毫无抵抗力，一张羽毛扫可能直接导致崩盘。",
+    "极度依赖王家的神殿，神殿一旦被去除或被无效，卡组强度直线下降。",
+    "展开点相对固定，容易被针对性手坑阻断。"
   ],
   "score": {
     "consistency": {
-      "value": 7,
-      "reason": "启动件开出率约71.09%，处于中等偏上水平，由于有多种检索手段，起手基本能动。"
+      "value": 8,
+      "reason": "启动点丰富（13张），起手开出率 85.2%，满足 7-8 分锚点。"
     },
     "ceiling": {
-      "value": 6,
-      "reason": "终场包含无效、炸卡和抗性保护，阻抗数量适中，但缺乏对魔陷发动的硬康（除少量反击陷阱外）。"
+      "value": 7,
+      "reason": "完整终场包含无效、多次炸卡和对象抗性，属于高质量 3 妨碍阵型。"
     },
     "resilience": {
-      "value": 4,
-      "reason": "路线相对单一且对神殿依赖度极高，被精准打断或针对后场容易导致整线崩溃。"
+      "value": 5,
+      "reason": "路线较为单一，核心调度点影法师被断后难以维持强度，容易被单张灰流丽阻断。"
     },
     "going_second": {
       "value": 6,
-      "reason": "投入了足量的泛用解场卡（3颉颃、2超融合），后攻有一定的突破保障。"
+      "reason": "有颉颃和超融合等强力解场，但本身系统内解场较慢，依赖抽到泛用卡。"
     },
     "grind": {
-      "value": 8,
-      "reason": "由于圣神蛇的回收机制，只要进入中局，资源循环会非常恐怖，非常适合长盘对局。"
+      "value": 9,
+      "reason": "圣神蛇和裁决阿努比斯的循环系统极强，资源堆叠和回收能力优秀。"
     },
     "route_diversity": {
-      "value": 3,
-      "reason": "基本所有starter最终都汇聚到同一条展开逻辑上，缺乏多变性。"
+      "value": 4,
+      "reason": "所有启动方式均指向同一战术终场，缺乏应对不同局面的变招，单点明显。"
     }
   }
 }

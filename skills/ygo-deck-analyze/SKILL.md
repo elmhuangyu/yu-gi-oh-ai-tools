@@ -51,13 +51,13 @@ description: 游戏王卡组完整分析流程的 parent skill。当用户提供
 
 ### Step 1 — 初始化工作目录
 
-1. 根据 `.ydk` 文件名创建工作目录
+1. 根据 `.ydk` 文件名创建工作目录，并创建 `TODO.md`
 
 ```bash
-mkdir -p {deck_name}_analysis
+mkdir -p {deck_name}_analysis && touch {deck_name}_analysis/TODO.md
 ```
 
-2. 创建 `TODO.md`，内容如下：
+2. 写 `TODO.md`，内容如下：
 
 ```markdown
 # {deck_name} 分析进度
